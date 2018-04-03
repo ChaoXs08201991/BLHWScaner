@@ -5,7 +5,7 @@
 #ifndef _RESTARTAGING_PAGE_H_
 #define _RESTARTAGING_PAGE_H_
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <QtCore/QTimer>
 #include <QTimer>
 
@@ -42,7 +42,7 @@ class RestartAgingPage : public QDialog
 
 public:
     /// @brief 构造函数
-    RestartAgingPage(IN QWidget *parent = 0, IN Qt::WFlags flags = 0);
+    RestartAgingPage(IN QWidget *parent = 0, IN Qt::WindowFlags flags = 0);
 
     /// @brief 析构函数
     ~RestartAgingPage();

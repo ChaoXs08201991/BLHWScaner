@@ -30,7 +30,7 @@ class TestItemPage : public QWidget
 public:
     /// @brief 构造函数
     /// @param[in] uiRatio UI放大系数
-    TestItemPage(IN float uiRatio, IN QWidget *parent = 0, IN Qt::WFlags flags = 0);
+    TestItemPage(IN float uiRatio, IN QWidget *parent = 0, IN Qt::WindowFlags flags = 0);
     ~TestItemPage();
 
 protected:

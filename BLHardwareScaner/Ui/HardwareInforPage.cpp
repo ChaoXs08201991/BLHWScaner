@@ -10,7 +10,7 @@
 #include "..\\Src\\LHardwareInfor.h"
 #include "..\\Src\\Log\\LLog.h"
 
-HardwareInforPage::HardwareInforPage(float uiRatio, QWidget *parent, Qt::WFlags flags)
+HardwareInforPage::HardwareInforPage(float uiRatio, QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
     m_pSplashScrreen = NULL;
@@ -230,7 +230,7 @@ void HardwareInforPage::LoadQSS(IN float uiRatio)
         QString qss = qssFile.readAll();
 
         // 列表框每项的高度需要动态设置, 不能在QSS文件中写死
-        QString listItemHeightQss = QString::fromAscii(
+        QString listItemHeightQss = QString::fromLatin1(
             "QListWidget#listWidgetHWItem::item\
              {\
                 min-height: %1px;\
@@ -668,7 +668,7 @@ void MotherBoardItemInfor::LoadHWInfor()
             biosModeStr = "UEFI";
 
         this->ContentAddItem(QObject::tr("BIOS Mode"), biosModeStr);
-        PrintLogA("\tBIOS Mode: %s", biosModeStr.toAscii());
+        PrintLogA("\tBIOS Mode: %s", biosModeStr.toLatin1());
     }
 
     QString biosVendor = QString::fromStdString(motherBoardInfor.BiosVendor).trimmed();

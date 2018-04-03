@@ -2,7 +2,7 @@
 #include "RestartAgingPage.h"
 
 #include <QtGui/QValidator>
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
 #include <QtCore/QDateTime>
@@ -49,7 +49,7 @@
 #define ACTION_S3 "S3"
 #define ACTION_S4 "S4"
 
-RestartAgingPage::RestartAgingPage(IN QWidget *parent /* = 0 */, IN Qt::WFlags flags /* = 0 */)
+RestartAgingPage::RestartAgingPage(IN QWidget *parent /* = 0 */, IN Qt::WindowFlags flags /* = 0 */)
     : QDialog(parent, flags)
 {
     ui.setupUi(this);

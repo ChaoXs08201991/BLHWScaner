@@ -66,7 +66,7 @@ class TempManagementPage : public QWidget
     Q_OBJECT
 
 public:
-    TempManagementPage(IN QWidget *parent = 0, IN Qt::WFlags flags = 0);
+    TempManagementPage(IN QWidget *parent = 0, IN Qt::WindowFlags flags = 0);
     ~TempManagementPage();
 
 protected:

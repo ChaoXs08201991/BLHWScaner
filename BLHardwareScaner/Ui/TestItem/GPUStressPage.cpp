@@ -6,7 +6,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QSettings>
 #include <QtCore/QDateTime>
-#include <QtGui/QListView>
+#include <QtWidgets/QListView>
 
 #include "App\\AppParam.h"
 
@@ -29,7 +29,7 @@
 
 
 
-GPUStressPage::GPUStressPage(IN float uiRatio, IN QWidget *parent /* = 0 */, IN Qt::WFlags flags /* = 0 */)
+GPUStressPage::GPUStressPage(IN float uiRatio, IN QWidget *parent /* = 0 */, IN Qt::WindowFlags flags /* = 0 */)
     : QDialog(parent, flags)
 {
     m_gpuProcess.setWorkingDirectory(".\\GPUStress\\");
@@ -225,7 +225,7 @@ void GPUStressPage::LoadQSS(IN float uiRatio)
         qssFile.close();  
 
         // 下拉框每项的高度需要动态设置, 不能在QSS文件中写死
-        QString comboxItemHeightQss = QString::fromAscii(
+        QString comboxItemHeightQss = QString::fromLatin1(
             "QComboBox QAbstractItemView::item\
             {\
             color: black;\

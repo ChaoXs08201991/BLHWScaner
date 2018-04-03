@@ -2,7 +2,7 @@
 
 #include "TempManagementPage.h"
 
-#include <QtGui/QMessageBox>
+#include <QtWidgets/QMessageBox>
 #include <QtCore/QFile>
 #include <QtCore/QTime>
 
@@ -254,7 +254,7 @@ void ScanPerformanceThread::run()
 
 }
 
-TempManagementPage::TempManagementPage(IN QWidget *parent, IN Qt::WFlags flags)
+TempManagementPage::TempManagementPage(IN QWidget *parent, IN Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
     ui.setupUi(this);

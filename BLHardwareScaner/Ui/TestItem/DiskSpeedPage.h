@@ -3,7 +3,7 @@
 #ifndef _DISKSPEED_PAGE_H_
 #define _DISKSPEED_PAGE_H_
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <QtCore/QVector>
 #include <QtCore/QTimer>
 
@@ -30,7 +30,7 @@ class DiskSpeedPage : public QDialog
 public:
     /// @brief 构造函数
     /// @param[in] uiRatio UI放大系数
-    DiskSpeedPage(IN float uiRatio, IN QWidget *parent = 0, IN Qt::WFlags flags = 0);
+    DiskSpeedPage(IN float uiRatio, IN QWidget *parent = 0, IN Qt::WindowFlags flags = 0);
 
     /// @brief 析构函数
     ~DiskSpeedPage();

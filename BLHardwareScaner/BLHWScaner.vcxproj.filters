@@ -158,15 +158,6 @@
     <ClCompile Include="Ui\TestItem\CameraViewPage.cpp">
       <Filter>Ui\TestItem</Filter>
     </ClCompile>
-    <ClCompile Include="Update\FtpDownload.cpp">
-      <Filter>Update</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\moc_FtpDownload.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Update\NewVersionUpdate.cpp">
-      <Filter>Update</Filter>
-    </ClCompile>
     <ClCompile Include="..\Src\Pdh\LPdh.cpp">
       <Filter>Src\Pdh</Filter>
     </ClCompile>
@@ -249,12 +240,6 @@
     </CustomBuild>
     <CustomBuild Include="Ui\Main.ui">
       <Filter>Ui</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Update\FtpDownload.h">
-      <Filter>Update</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Update\NewVersionUpdate.h">
-      <Filter>Update</Filter>
     </CustomBuild>
     <CustomBuild Include="Ui\TestItem\RestartAging.ui">
       <Filter>Ui\TestItem</Filter>

@@ -4,7 +4,7 @@
 #define _HARDWAREINFORPAGE_H_
 
 #include <QtCore/QVector>
-#include <QtGui/QSplashScreen>
+#include <QtWidgets/QSplashScreen>
 
 #include "ui_HardwareInfor.h"
 
@@ -30,7 +30,7 @@ class HardwareInforPage : public QWidget
 public:
     /// @brief 构造函数
     /// @param[in] uiRatio UI放大系数
-    HardwareInforPage(IN float uiRatio, IN QWidget *parent = 0, IN Qt::WFlags flags = 0);
+    HardwareInforPage(IN float uiRatio, IN QWidget *parent = 0, IN Qt::WindowFlags flags = 0);
     ~HardwareInforPage();
 
 public:

@@ -1,14 +1,14 @@
 ﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtGui/QMainWindow>
-#include <QtGui/QSplashScreen>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QSplashScreen>
 #include <QtGui/QMouseEvent>
 #include <QtCore/QTimer>
 
 #include "ui_Main.h"
 
-#include "Update/NewVersionUpdate.h"
+// #include "Update/NewVersionUpdate.h"
 
 class HardwareInforPage;
 class TempManagementPage;
@@ -19,7 +19,7 @@ class MainPage : public QMainWindow
     Q_OBJECT
 
 public:
-    MainPage(QWidget *parent = 0, Qt::WFlags flags = 0);
+    MainPage(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~MainPage();
 
 protected:
@@ -71,10 +71,10 @@ private:
 
     float m_uiRatio; ///< UI需要调整的比例
 
-    CheckNew m_checkNew; ///< 检查新版本
+    // CheckNew m_checkNew; ///< 检查新版本
     QTimer m_checkNewTimer; ///< 检查新版本定时器
 
-    DownloadNew m_downloadNew; ///< 下载新版本
+    // DownloadNew m_downloadNew; ///< 下载新版本
     QTimer m_downloadNewTimer; ///< 下载新版本定时器
 };
 

@@ -2,7 +2,7 @@
 #pragma once
 
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 
 
 /// @brief 自定义应用程序类

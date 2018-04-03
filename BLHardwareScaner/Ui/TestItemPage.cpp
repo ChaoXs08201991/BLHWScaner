@@ -17,7 +17,7 @@
 #define STRING_TESTITEM_RESTAT_AGING QObject::tr("RestartAging")
 #define STRING_TESTITEM_GPU_STRESS QObject::tr("GPUStress")
 
-TestItemPage::TestItemPage(IN float uiRatio, QWidget *parent, Qt::WFlags flags)
+TestItemPage::TestItemPage(IN float uiRatio, QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
     

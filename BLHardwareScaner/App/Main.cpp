@@ -1,6 +1,6 @@
 ﻿
-#include <QtGui/QMessageBox>
-#include <QtGui/QApplication>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QApplication>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 

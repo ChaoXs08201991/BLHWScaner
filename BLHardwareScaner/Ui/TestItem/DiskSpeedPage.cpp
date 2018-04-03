@@ -2,7 +2,7 @@
 #include "DiskSpeedPage.h"
 
 #include <QtCore/QFile>
-#include <QtGui/QListView>
+#include <QtWidgets/QListView>
 
 #include "App\\AppParam.h"
 
@@ -26,7 +26,7 @@
 #define SIZE_2G   "2G"
 #define SIZE_4G   "4G"
 
-DiskSpeedPage::DiskSpeedPage(IN float uiRatio, QWidget *parent, Qt::WFlags flags)
+DiskSpeedPage::DiskSpeedPage(IN float uiRatio, QWidget *parent, Qt::WindowFlags flags)
     : QDialog(parent, flags)
 {
     ui.setupUi(this);
@@ -505,7 +505,7 @@ void DiskSpeedPage::LoadQSS(IN float uiRatio)
         qssFile.close();  
 
         // 下拉框每项的高度需要动态设置, 不能在QSS文件中写死
-        QString comboxItemHeightQss = QString::fromAscii(
+        QString comboxItemHeightQss = QString::fromLatin1(
             "QComboBox QAbstractItemView::item\
              {\
                 color: black;\

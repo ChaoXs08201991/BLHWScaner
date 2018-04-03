@@ -3,7 +3,7 @@
 
 #include <QtGui/QPaintDevice>
 #include <QtGui/QPainter>
-#include <QtGui/QDesktopWidget>
+#include <QtWidgets/QDesktopWidget>
 #include <QtCore/QFile>
 #include <QtCore/QProcess>
 
@@ -17,7 +17,7 @@
 
 #define MAIN_TITLE "BLHWScaner"
 
-MainPage::MainPage(QWidget *parent, Qt::WFlags flags)
+MainPage::MainPage(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
 {   
      ui.setupUi(this);
@@ -151,10 +151,10 @@ void MainPage::showEvent(QShowEvent* e)
         this->setFocus(Qt::ActiveWindowFocusReason);
 
         // 检查新版本
-        m_checkNew.SetCurrentVersion(LAppParam::GetAppVersion());
-        m_checkNew.StartCheckAsync();
-        m_checkNewTimer.setInterval(1000);
-        m_checkNewTimer.start();
+        // m_checkNew.SetCurrentVersion(LAppParam::GetAppVersion());
+        // m_checkNew.StartCheckAsync();
+        // m_checkNewTimer.setInterval(1000);
+        // m_checkNewTimer.start();
     }
 
     // 结束启动画面
@@ -212,84 +212,84 @@ void MainPage::CloseButtonClicked()
 
 void MainPage::UpdateButtonClicked()
 {
-    if (ui.pushButtonUpdate->text() == "Update")
-    {
-        // 开始下载新版本
-        m_downloadNew.StartDownloadAsync();
-        m_downloadNewTimer.setInterval(1000);
-        m_downloadNewTimer.start();
-
-        ui.pushButtonUpdate->setEnabled(false);
-        ui.pushButtonUpdate->setText("");
-
-        return;
-    }
-
-    if (ui.pushButtonUpdate->text() == "Install")
-    {
-        ui.pushButtonUpdate->setEnabled(false);
-        ui.pushButtonUpdate->setText("");
-        ui.labelUpdate->setText("Installing... ");
-
-        QProcess::startDetached(".\\Update\\UpdateInstall.exe", QStringList(), ".\\Update\\");
-
-        return;
-    }
+//     if (ui.pushButtonUpdate->text() == "Update")
+//     {
+//         // 开始下载新版本
+//         m_downloadNew.StartDownloadAsync();
+//         m_downloadNewTimer.setInterval(1000);
+//         m_downloadNewTimer.start();
+// 
+//         ui.pushButtonUpdate->setEnabled(false);
+//         ui.pushButtonUpdate->setText("");
+// 
+//         return;
+//     }
+// 
+//     if (ui.pushButtonUpdate->text() == "Install")
+//     {
+//         ui.pushButtonUpdate->setEnabled(false);
+//         ui.pushButtonUpdate->setText("");
+//         ui.labelUpdate->setText("Installing... ");
+// 
+//         QProcess::startDetached(".\\Update\\UpdateInstall.exe", QStringList(), ".\\Update\\");
+// 
+//         return;
+//     }
     
 }
 
 void MainPage::CheckNewTimerTimeout()
 {
-    CHECKNEW_RESULT result = m_checkNew.GetResult();
-
-    if (CHECKNEW_RUNNING == result)
-    {
-        return;
-    }
-
-    m_checkNewTimer.stop();
-
-    
-    // 有新版本需要更新
-    if (CHECKNEW_WITH_NEW == result)
-    {
-        ui.pushButtonUpdate->setText("Update");
-        ui.pushButtonUpdate->setVisible(true);
-        ui.labelUpdate->setText("New Version!! ");
-    }
+//     CHECKNEW_RESULT result = m_checkNew.GetResult();
+// 
+//     if (CHECKNEW_RUNNING == result)
+//     {
+//         return;
+//     }
+// 
+//     m_checkNewTimer.stop();
+// 
+//     
+//     // 有新版本需要更新
+//     if (CHECKNEW_WITH_NEW == result)
+//     {
+//         ui.pushButtonUpdate->setText("Update");
+//         ui.pushButtonUpdate->setVisible(true);
+//         ui.labelUpdate->setText("New Version!! ");
+//     }
 
 }
 
 void MainPage::DownloadNewTimerTimeout()
 {
-    int iRet = m_downloadNew.GetResult();
-
-    // 正在下载新版本
-    if (iRet >= 0 && iRet <= 100)
-    {
-        ui.labelUpdate->setText(QObject::tr("Downloading: %1% ").arg(iRet));
-        return;
-    }
-
-    // 下载新版本错误
-    if (DOWNLOADNEW_ERROR == iRet)
-    {
-        ui.labelUpdate->setText("Download Error! ");
-        ui.pushButtonUpdate->setText("Update");
-        ui.pushButtonUpdate->setEnabled(true);
-        m_downloadNewTimer.stop();
-        return;
-    }
-
-    // 新版本下载完成
-    if (DOWNLOADNEW_DONE == iRet)
-    {
-        ui.labelUpdate->setText("Download Completed! ");
-        ui.pushButtonUpdate->setText("Install");
-        ui.pushButtonUpdate->setEnabled(true);
-        m_downloadNewTimer.stop();
-        return;
-    }
+//     int iRet = m_downloadNew.GetResult();
+// 
+//     // 正在下载新版本
+//     if (iRet >= 0 && iRet <= 100)
+//     {
+//         ui.labelUpdate->setText(QObject::tr("Downloading: %1% ").arg(iRet));
+//         return;
+//     }
+// 
+//     // 下载新版本错误
+//     if (DOWNLOADNEW_ERROR == iRet)
+//     {
+//         ui.labelUpdate->setText("Download Error! ");
+//         ui.pushButtonUpdate->setText("Update");
+//         ui.pushButtonUpdate->setEnabled(true);
+//         m_downloadNewTimer.stop();
+//         return;
+//     }
+// 
+//     // 新版本下载完成
+//     if (DOWNLOADNEW_DONE == iRet)
+//     {
+//         ui.labelUpdate->setText("Download Completed! ");
+//         ui.pushButtonUpdate->setText("Install");
+//         ui.pushButtonUpdate->setEnabled(true);
+//         m_downloadNewTimer.stop();
+//         return;
+//     }
 
     
 }

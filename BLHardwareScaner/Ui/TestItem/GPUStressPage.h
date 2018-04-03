@@ -3,7 +3,7 @@
 #ifndef _GPUSTRESS_PAGE_H_
 #define _GPUSTRESS_PAGE_H_
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <QtCore/QVector>
 #include <QtCore/QTimer>
 #include <QtCore/QProcess>
@@ -34,7 +34,7 @@ class GPUStressPage : public QDialog
 public:
     /// @brief 构造函数
     /// @param[in] uiRatio UI放大系数
-    GPUStressPage(IN float uiRatio, IN QWidget *parent = 0, IN Qt::WFlags flags = 0);
+    GPUStressPage(IN float uiRatio, IN QWidget *parent = 0, IN Qt::WindowFlags flags = 0);
 
     /// @brief 析构函数
     ~GPUStressPage();

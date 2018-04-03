@@ -3,7 +3,7 @@
 #ifndef _CAMERAVIRW_PAGE_H_
 #define _CAMERAVIEW_PAGE_H_
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 #include <QtCore/QVector>
 
 #include "ui_CameraView.h"
@@ -30,7 +30,7 @@ class CameraViewPage : public QDialog
 
 public:
     /// @brief 构造函数
-    CameraViewPage(IN QWidget *parent = 0, IN Qt::WFlags flags = 0);
+    CameraViewPage(IN QWidget *parent = 0, IN Qt::WindowFlags flags = 0);
 
     /// @brief 析构函数
     ~CameraViewPage();

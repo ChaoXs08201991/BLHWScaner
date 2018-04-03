@@ -8,7 +8,7 @@
 
 
 
-CameraViewPage::CameraViewPage(IN QWidget *parent /* = 0 */, IN Qt::WFlags flags /* = 0 */)
+CameraViewPage::CameraViewPage(IN QWidget *parent /* = 0 */, IN Qt::WindowFlags flags /* = 0 */)
     : QDialog(parent, flags)
 {
     ui.setupUi(this);
@@ -103,7 +103,7 @@ void CameraViewPage::ShowCurrentCamera()
     ui.labelCameraName->setText(qStrName);
 
     WId wid = ui.widgetCamera->winId();
-    m_pCurrentWebcam->SetParentWindow(wid, 0, 0, ui.widgetCamera->width(), ui.widgetCamera->height());
+    m_pCurrentWebcam->SetParentWindow((HWND)wid, 0, 0, ui.widgetCamera->width(), ui.widgetCamera->height());
     m_pCurrentWebcam->Run();
 }
 
