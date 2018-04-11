@@ -1,6 +1,6 @@
 ﻿
-#ifndef _WIN8API_H_
-#define _WIN8API_H_
+#ifndef _SYSTEMINFO_H_
+#define _SYSTEMINFO_H_
 
 #ifndef IN
 #define IN
@@ -33,6 +33,10 @@
 /// @brief 获取BIOS模式
 /// @return 未知模式(BIOS_UNKNOWN 0), 传统模式(BIOS_LEGACY 1), UEFI模式(BIOS_UEFI 2)
 int GetBIOSMode();
+
+/// @brief 判断是否支持触摸屏
+/// @return true(支持)，false(不支持)
+bool IsTouchScreenSupported();
 
 
 #endif

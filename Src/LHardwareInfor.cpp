@@ -8,23 +8,12 @@ using std::transform;
 #include "Wmi/LWMIHardwareClasses.h"
 
 #include "SetupApi/LSetupAPI.h"
-
 #include "WifiNetwork/LWifiNetwork.h"
-
 #include "DiskController/LDiskController.h"
-
 #include "Log/LLog.h"
-
 #include "SMBiosPaser/LSMBiosPaser.h"
-
 #include "Webcam/LWebcam.h"
-
-#include "SystemMetrics/LSystemMetrics.h"
-
-#include "Win8API/Win8API.h"
-
-
-
+#include "SystemInfo/SystemInfo.h"
 
 
 /// @brief 硬件信息类
@@ -595,7 +584,7 @@ private:
     /// @param[out] systemMetricsInfor 存储系统度量信息
     void ScanSystemMetricsInfo(OUT SystemMetricsInfor& systemMetricsInfor)
     {
-        systemMetricsInfor.TouchScreenSupported = LSystemMetrics::IsTouchScreenSupported();
+        systemMetricsInfor.TouchScreenSupported = IsTouchScreenSupported();
     }
 
     /// @brief 扫描生物识别设备信息

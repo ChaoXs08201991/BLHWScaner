@@ -60,14 +60,11 @@
     <Filter Include="Src\TaskScheduler">
       <UniqueIdentifier>{84d70c82-a4ba-46e8-a605-7048e67f38ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\SystemMetrics">
-      <UniqueIdentifier>{0ee9cb7f-13b6-4184-ab64-7af76d2ce14a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Win8API">
-      <UniqueIdentifier>{1b6cf6ab-73cb-4a42-886e-6bcf745bcdac}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\PowerMgmt">
       <UniqueIdentifier>{7d81841e-6d93-499e-95d6-7831150ff889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\SystemInfo">
+      <UniqueIdentifier>{1b6cf6ab-73cb-4a42-886e-6bcf745bcdac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -182,12 +179,6 @@
     <ClCompile Include="App\AppParam.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\SystemMetrics\LSystemMetrics.cpp">
-      <Filter>Src\SystemMetrics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Src\Win8API\Win8API.cpp">
-      <Filter>Src\Win8API</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\moc_GPUStressPage.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
@@ -202,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="..\Src\PowerMgmt\PowerMgmt.cpp">
       <Filter>Src\PowerMgmt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\SystemInfo\SystemInfo.cpp">
+      <Filter>Src\SystemInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -348,17 +342,14 @@
     <ClInclude Include="App\AppParam.h">
       <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\SystemMetrics\LSystemMetrics.h">
-      <Filter>Src\SystemMetrics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Src\Win8API\Win8API.h">
-      <Filter>Src\Win8API</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_GPUStress.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Src\PowerMgmt\PowerMgmt.h">
       <Filter>Src\PowerMgmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\SystemInfo\SystemInfo.h">
+      <Filter>Src\SystemInfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
