@@ -115,6 +115,7 @@
     <ClCompile Include="App\MsgApplication.cpp" />
     <ClCompile Include="GeneratedFiles\moc_CameraViewPage.cpp" />
     <ClCompile Include="GeneratedFiles\moc_DiskSpeedPage.cpp" />
+    <ClCompile Include="GeneratedFiles\moc_FtpDownload.cpp" />
     <ClCompile Include="GeneratedFiles\moc_GPUStressPage.cpp" />
     <ClCompile Include="GeneratedFiles\moc_HardwareInforPage.cpp" />
     <ClCompile Include="GeneratedFiles\moc_MainPage.cpp" />
@@ -136,6 +137,8 @@
     <ClCompile Include="Ui\TestItem\DiskSpeedPage.cpp" />
     <ClCompile Include="Ui\TestItem\GPUStressPage.cpp" />
     <ClCompile Include="Ui\TestItem\RestartAgingPage.cpp" />
+    <ClCompile Include="Update\FtpDownload.cpp" />
+    <ClCompile Include="Update\NewVersionUpdate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Ui\MainPage.h">
@@ -173,6 +176,17 @@
     <ClInclude Include="..\Src\Wmi\LWMIHardwareClasses.h" />
     <ClInclude Include="..\Src\Wmi\LWMISystemClasses.h" />
     <ClInclude Include="App\AppParam.h" />
+    <ClInclude Include="Update\NewVersionUpdate.h" />
+    <CustomBuild Include="Update\FtpDownload.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -DQT_NETWORK_LIB -D_MBCS "-I.\GeneratedFiles" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I$(QTDIR)\include\QtNetwork" "-IC:\Program Files (x86)\Visual Leak Detector\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL -DQT_NETWORK_LIB -D_MBCS "-I.\GeneratedFiles" "-I$(QTDIR)\include" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I." "-I$(QTDIR)\include\QtNetwork" "-IC:\Program Files (x86)\Visual Leak Detector\include"</Command>
+    </CustomBuild>
     <CustomBuild Include="App\MsgApplication.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing MsgApplication.h...</Message>

@@ -197,6 +197,15 @@
     <ClCompile Include="..\Src\SystemInfo\SystemInfo.cpp">
       <Filter>Src\SystemInfo</Filter>
     </ClCompile>
+    <ClCompile Include="Update\FtpDownload.cpp">
+      <Filter>Update</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\moc_FtpDownload.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Update\NewVersionUpdate.cpp">
+      <Filter>Update</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Ui\HardwareInforPage.h">
@@ -252,6 +261,9 @@
     </CustomBuild>
     <CustomBuild Include="App\MsgApplication.h">
       <Filter>App</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Update\FtpDownload.h">
+      <Filter>Update</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -350,6 +362,9 @@
     </ClInclude>
     <ClInclude Include="..\Src\SystemInfo\SystemInfo.h">
       <Filter>Src\SystemInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Update\NewVersionUpdate.h">
+      <Filter>Update</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
