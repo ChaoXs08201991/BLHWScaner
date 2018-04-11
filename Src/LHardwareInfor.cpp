@@ -13,8 +13,6 @@ using std::transform;
 
 #include "DiskController/LDiskController.h"
 
-#include "SMARTPaser/LSMARTPaser.h"
-
 #include "Log/LLog.h"
 
 #include "SMBiosPaser/LSMBiosPaser.h"
@@ -383,108 +381,48 @@ private:
             diskDriveManager.GetDiskSerialNumber(i, diskInfor.SerialNumber[i]);
             diskDriveManager.GetDiskSize(i, diskInfor.TotalSize[i]);
             diskDriveManager.GetDiskLogicalName(i, diskInfor.LogicalName[i]);
-
-            LWMI::LDiskDriveManager::LDISK_TYPE diskType;
-            diskDriveManager.GetDiskType(i, diskType);
-            diskInfor.DiskType[i] = (DISK_TYPE )diskType;
             diskDriveManager.GetDiskInterfaceType(i, diskInfor.InterfaceType[i]);
+            diskDriveManager.GetDiskDeviceID(i, diskInfor.DeviceId[i]);
 
-            diskInfor.IsATA[i] = false;
-            diskInfor.ATAInfor[i].RotationRate = 0;
-            diskInfor.ATAInfor[i].SATAType = 0;
-            diskInfor.ATAInfor[i].PowerOnHours = 0;
+            LIDEDiskController ideDiskController(diskInfor.DeviceId[i]);
+            LGenStorController gsController(diskInfor.DeviceId[i]);
 
-            diskInfor.FixedDiskType[i] = FIXED_DISK_UNKNOWN;
-
-            if (diskInfor.DiskType[i] != FIXED_DISK)
-                continue;
-
-            // 获取固定硬盘的其他属性
-
-            wstring pnpDeviceID;
-            wstring parentInstanceID;
-            diskDriveManager.GetDiskPNPDeviceID(i, pnpDeviceID);
-            PrintLogW(L"Disk InstanceID: %s", pnpDeviceID.c_str());
-            if (pnpDeviceID.empty())
-                continue;
-
-            // 获取磁盘驱动器的实例ID
-            LSetupDevAll devAll;
-            for (int j = 0; j < devAll.GetDevNum(); j++)
+            LStorageDeviceProperty storDevProp;
+            gsController.GetDeviceProperty(storDevProp);
+            if (storDevProp.RemovableMedia)
             {
-                wstring instanceID;
-                devAll.GetInstanceID(j, instanceID);
-                if (pnpDeviceID == instanceID)
-                {
-                    devAll.GetParentInstanceId(j, parentInstanceID);
-                    break;
-                }
-            }
-
-            PrintLogW(L"Disk Controller InstanceID: %s", parentInstanceID.c_str());
-            if (parentInstanceID.empty())
-                continue;
-
-            // 获取磁盘驱动器的类别和匹配设备ID
-            wstring diskControllerClass;
-            wstring diskControllerMatchingDeviceID;
-            wstring diskControllerDesc;
-            for (int j = 0; j < devAll.GetDevNum(); j++)
-            {
-                wstring instanceID;
-                devAll.GetInstanceID(j, instanceID);
-                if (parentInstanceID == instanceID)
-                {
-                    devAll.GetClass(j,diskControllerClass);
-                    devAll.GetMatchingDeviceId(j, diskControllerMatchingDeviceID);
-                    devAll.GetDevDesc(j, diskControllerDesc);
-                    break;
-                }
-            }
-
-            diskControllerClass = this->WStringToUpper(diskControllerClass);
-            diskControllerDesc = this->WStringToUpper(diskControllerDesc);
-            diskControllerMatchingDeviceID = this->WStringToUpper(diskControllerMatchingDeviceID);
-
-            PrintLogW(L"Disk Controller Class: %s", diskControllerClass.c_str());
-            PrintLogW(L"Disk Controller Matching DeviceID: %s", diskControllerMatchingDeviceID.c_str());
-            PrintLogW(L"Disk Controller Desc: %s", diskControllerDesc.c_str());
-            if (diskControllerClass.empty())
-                continue;
-            if (diskControllerDesc.empty())
-                continue;
-
-            if (diskControllerClass.compare(L"HDC") == 0) // Hard Disk Controller
-            {
-                diskInfor.IsATA[i] = true;
-                wstring deviceID;
-                diskDriveManager.GetDiskDeviceID(i, deviceID);
-                LIDEDiskController ideDiskController(deviceID);
-                diskInfor.ATAInfor[i].RotationRate = ideDiskController.GetRotationRate();
-                diskInfor.ATAInfor[i].SATAType = ideDiskController.GetSATAType();
-                if (diskInfor.ATAInfor[i].RotationRate == 1)
-                    diskInfor.FixedDiskType[i] = FIXED_DISK_SATA_SSD;
-                else
-                    diskInfor.FixedDiskType[i] = FIXED_DISK_HDD;
-
-                unsigned char smartData[SMART_DATA_LENGTH] = {0}; // 存储SMART数据
-                ideDiskController.GetSMARTData(smartData);
-                LSMARTParser smartParser(smartData);
-                diskInfor.ATAInfor[i].PowerOnHours = 0;
-                smartParser.GetPowerOnHours(diskInfor.ATAInfor[i].PowerOnHours);
-            }
-            else if (diskControllerClass.compare(L"SCSIADAPTER") == 0) // SCSI and RAID Controllers
-            {
-                if (diskControllerMatchingDeviceID.compare(L"SD\\CLASS_MMC") == 0)
-                    diskInfor.FixedDiskType[i] = FIXED_DISK_EMMC;
-                if (diskControllerDesc.find(L"RAID") != wstring::npos)
-                    diskInfor.FixedDiskType[i] = FIXED_DISK_RAID;
-                if (diskControllerDesc.find(L"NVM EXPRESS") != wstring::npos)
-                    diskInfor.FixedDiskType[i] = FIXED_DISK_NVME_SSD;
-            }
+                diskInfor.DiskType[i] = DISK_REMOVABLE;
+            }   
             else
             {
-                diskInfor.FixedDiskType[i] = FIXED_DISK_UNKNOWN;
+                switch (storDevProp.BusType)
+                {
+                case BUS_TYPE_VIRTUAL:
+                case BUS_TYPE_FILEBACKEDVIRTUAL:
+                    diskInfor.DiskType[i] = DISK_VIRTUAL;
+                    break;
+                case BUS_TYPE_USB:
+                    diskInfor.DiskType[i] = DISK_EXTERNAL_USB;
+                    break;
+                case BUS_TYPE_RAID:
+                    diskInfor.DiskType[i] = DISK_FIXED_RAID;
+                    break;
+                case BUS_TYPE_NVME:
+                    diskInfor.DiskType[i] = DISK_FIXED_NVME_SSD;
+                    break;
+                case BUS_TYPE_MMC:
+                    diskInfor.DiskType[i] = DISK_FIXED_EMMC;
+                    break;
+                case BUS_TYPE_SATA:    
+                    if (ideDiskController.GetRotationRate() == 1)
+                        diskInfor.DiskType[i] = DISK_FIXED_SATA_SSD;
+                    else
+                        diskInfor.DiskType[i] = DISK_FIXED_SATA_HDD;
+                    break;
+                default:
+                    diskInfor.DiskType[i] = DISK_UNKNOWN;
+                    break;
+                }
             }
         }
     }

@@ -123,44 +123,38 @@ struct PhysicalMemoryInforArray
 /// @brief 磁盘类型
 enum DISK_TYPE
 {
-    UNKNOWN_DISK = 0, // 未知类型
-    FIXED_DISK = 1, // 固定磁盘(如本地硬盘)
-    EXTERNAL_USB_DISK = 2, // 扩展磁盘(如USB移动硬盘)
-    VIRTUAL_DISK = 3, // 虚拟硬盘(如VHD)
-    REMOVABLE_DISK = 4, // 可移动盘
-};
-
-/// @brief 固定磁盘类型
-enum FIXED_DISK_TYPE
-{
-    FIXED_DISK_UNKNOWN = 0, // 未知类型
-    FIXED_DISK_HDD = 1, // 机械硬盘
-    FIXED_DISK_SATA_SSD = 2, // SATA固态硬盘
-    FIXED_DISK_EMMC = 3, // EMMC硬盘
-    FIXED_DISK_RAID = 4, // 硬盘阵列
-    FIXED_DISK_NVME_SSD = 5 // NVME固态硬盘
+    DISK_UNKNOWN = 0,           // 未知类型
+    DISK_VIRTUAL = 1,           // 虚拟硬盘(如VHD)
+    DISK_REMOVABLE = 2,         // 可移动盘(如U盘)
+    DISK_EXTERNAL_USB = 3,      // 扩展磁盘(如USB移动硬盘)
+    DISK_FIXED_EMMC = 4,        // 本地EMMC硬盘
+    DISK_FIXED_RAID = 5,        // 本地硬盘阵列
+    DISK_FIXED_SATA_HDD = 6,    // 本地机械硬盘
+    DISK_FIXED_SATA_SSD = 7,    // 本地SATA固态硬盘
+    DISK_FIXED_NVME_SSD = 8     // 本地NVME固态硬盘
 };
 
 /// @brief 磁盘信息组
 struct DiskInforArray 
 {
-    unsigned long Count; ///< 磁盘数量
-    wstring Model[MAX_DISK_NUMBER]; ///< 磁盘型号
-    wstring SerialNumber[MAX_DISK_NUMBER]; ///< 磁盘序列号
-    unsigned long TotalSize[MAX_DISK_NUMBER]; ///< 磁盘总大小, 单位(G)
-    wstring InterfaceType[MAX_DISK_NUMBER]; ///< 磁盘接口类型(SCSI, HDC, IDE, USB 1394)
-    DISK_TYPE DiskType[MAX_DISK_NUMBER]; ///< 磁盘类型
-    wstring LogicalName[MAX_DISK_NUMBER]; ///< 磁盘逻辑分区名称, 多个分区以分号隔开, 如C:;D:;E:
+    unsigned long Count;                        ///< 磁盘数量
+    unsigned long TotalSize[MAX_DISK_NUMBER];   ///< 磁盘总大小, 单位(G)
+    wstring Model[MAX_DISK_NUMBER];             ///< 磁盘型号
+    wstring SerialNumber[MAX_DISK_NUMBER];      ///< 磁盘序列号
+    wstring InterfaceType[MAX_DISK_NUMBER];     ///< 磁盘接口类型(SCSI, HDC, IDE, USB 1394)
+    wstring LogicalName[MAX_DISK_NUMBER];       ///< 磁盘逻辑分区名称, 多个分区以分号隔开, 如C:;D:;E:
+    wstring DeviceId[MAX_DISK_NUMBER];          ///< 磁盘设备ID
+    DISK_TYPE DiskType[MAX_DISK_NUMBER];        ///< 磁盘类型
 
-    bool IsATA[MAX_DISK_NUMBER]; ///< 标识是否为ATA接口硬盘
-    struct  
-    {
-        unsigned long RotationRate; ///< 磁盘转速, 如果值为1表示为固态硬盘(SSD), 0表示获取失败
-        unsigned long SATAType; ///< SATA接口类型, 1(SATA1.0 1.5Gb/s), 2(SATA2.0 3.0Gb/s), 3(SATA3.0 6.0Gb/s), 0(获取失败)
-        unsigned long PowerOnHours; ///< 通电总时间, 单位hours(小时)
-    }ATAInfor[MAX_DISK_NUMBER]; ///< 只有IDE(ATA)接口的硬盘才应该使用该结构中的值
-
-    FIXED_DISK_TYPE FixedDiskType[MAX_DISK_NUMBER]; ///< 只有属于FIXED_DISK分类的硬盘, 该值才有效
+//     bool IsATA[MAX_DISK_NUMBER]; ///< 标识是否为ATA接口硬盘
+//     struct  
+//     {
+//         unsigned long RotationRate; ///< 磁盘转速, 如果值为1表示为固态硬盘(SSD), 0表示获取失败
+//         unsigned long SATAType; ///< SATA接口类型, 1(SATA1.0 1.5Gb/s), 2(SATA2.0 3.0Gb/s), 3(SATA3.0 6.0Gb/s), 0(获取失败)
+//         unsigned long PowerOnHours; ///< 通电总时间, 单位hours(小时)
+//     }ATAInfor[MAX_DISK_NUMBER]; ///< 只有IDE(ATA)接口的硬盘才应该使用该结构中的值
+// 
+//     FIXED_DISK_TYPE FixedDiskType[MAX_DISK_NUMBER]; ///< 只有属于FIXED_DISK分类的硬盘, 该值才有效
 };
 
 /// @brief 最大显示器数量
