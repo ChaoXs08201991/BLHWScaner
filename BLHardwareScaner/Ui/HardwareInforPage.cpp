@@ -151,17 +151,16 @@ void HardwareInforPage::InitHardwareInfor()
     }
 
     this->SplashScreenShow(QObject::tr("Loading Sensors Information..."));
-    LSensorObject sensorObject;
     SAccelerometer3DInforArray accelerometerSensor;
-    sensorObject.GetAccelerometer3DInfor(&accelerometerSensor);
+    GetAccelerometer3DSensorInfor(&accelerometerSensor);
     SGyrometer3DInforArray gyrometerSensor;
-    sensorObject.GetGyrometer3DInfor(&gyrometerSensor);
+    GetGyrometer3DSensorInfor(&gyrometerSensor);
     SCompass3DInforArray compassSensor;
-    sensorObject.GetCompass3DInfor(&compassSensor);
+    GetCompass3DSensorInfor(&compassSensor);
     SAmbientLightInforArray lightSensor;
-    sensorObject.GetAmbientLightInfor(&lightSensor);
+    GetAmbientLightSensorInfor(&lightSensor);
     SGpsInforArray gpsSensor;
-    sensorObject.GetGpsInfor(&gpsSensor);
+    GetGpsSensorInfor(&gpsSensor);
     if (accelerometerSensor.Count > 0 || 
         gyrometerSensor.Count > 0 || 
         compassSensor.Count > 0 || 
@@ -559,17 +558,16 @@ void ComputerItemInfor::LoadHWInfor()
     }
 
     // 填写传感器信息
-    LSensorObject sensorObject;
     SAccelerometer3DInforArray accelerometerSensor;
-    sensorObject.GetAccelerometer3DInfor(&accelerometerSensor);
+    GetAccelerometer3DSensorInfor(&accelerometerSensor);
     SGyrometer3DInforArray gyrometerSensor;
-    sensorObject.GetGyrometer3DInfor(&gyrometerSensor);
+    GetGyrometer3DSensorInfor(&gyrometerSensor);
     SCompass3DInforArray compassSensor;
-    sensorObject.GetCompass3DInfor(&compassSensor);
+    GetCompass3DSensorInfor(&compassSensor);
     SAmbientLightInforArray lightSensor;
-    sensorObject.GetAmbientLightInfor(&lightSensor);
+    GetAmbientLightSensorInfor(&lightSensor);
     SGpsInforArray gpsSensor;
-    sensorObject.GetGpsInfor(&gpsSensor);
+    GetGpsSensorInfor(&gpsSensor);
     if (accelerometerSensor.Count > 0 || 
         gyrometerSensor.Count > 0 || 
         compassSensor.Count > 0 || 
@@ -1041,10 +1039,8 @@ void SensorsItemInfor::LoadHWInfor()
     this->SetTitle(QObject::tr("Sensors"));
     PrintLogW(L"Sensors Information:");
 
-    LSensorObject sensorObject;
-
     SAccelerometer3DInforArray accelerometerSensor;
-    sensorObject.GetAccelerometer3DInfor(&accelerometerSensor);
+    GetAccelerometer3DSensorInfor(&accelerometerSensor);
     for (unsigned int i = 0; i < accelerometerSensor.Count; i++)
     {
         QString friendlyName = QString::fromStdWString(accelerometerSensor.FriendlyName[i]);
@@ -1055,7 +1051,7 @@ void SensorsItemInfor::LoadHWInfor()
 
 
     SGyrometer3DInforArray gyrometerSensor;
-    sensorObject.GetGyrometer3DInfor(&gyrometerSensor);
+    GetGyrometer3DSensorInfor(&gyrometerSensor);
 
     for (unsigned int i = 0; i < gyrometerSensor.Count; i++)
     {
@@ -1067,7 +1063,7 @@ void SensorsItemInfor::LoadHWInfor()
 
 
     SCompass3DInforArray compassSensor;
-    sensorObject.GetCompass3DInfor(&compassSensor);
+    GetCompass3DSensorInfor(&compassSensor);
     for (unsigned int i = 0; i < compassSensor.Count; i++)
     {
         QString friendlyName = QString::fromStdWString(compassSensor.FriendlyName[i]);
@@ -1077,7 +1073,7 @@ void SensorsItemInfor::LoadHWInfor()
     this->ContentAddBlankLine();
 
     SAmbientLightInforArray lightSensor;
-    sensorObject.GetAmbientLightInfor(&lightSensor);
+    GetAmbientLightSensorInfor(&lightSensor);
     for (unsigned int i =0; i< lightSensor.Count; i++)
     {
         QString friendlyName = QString::fromStdWString(lightSensor.FriendlyName[i]);
@@ -1087,7 +1083,7 @@ void SensorsItemInfor::LoadHWInfor()
     this->ContentAddBlankLine();
 
     SGpsInforArray gpsSensor;
-    sensorObject.GetGpsInfor(&gpsSensor);
+    GetGpsSensorInfor(&gpsSensor);
     for (unsigned int i = 0; i < gpsSensor.Count; i++)
     {
         QString friendlyName = QString::fromStdWString(gpsSensor.FriendlyName[i]);
