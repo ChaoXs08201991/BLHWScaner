@@ -1,4 +1,4 @@
-
+Ôªø
 #include "LCPUID.h"
 
 #include <cstring>
@@ -24,7 +24,7 @@ LCPUID::~LCPUID()
 
 bool LCPUID::GetVendor(OUT string& vendor)
 {
-    const unsigned int  CMD_GET_VENDOR_ID = 0; // ªÒ»°≥ß…Ã–≈œ¢
+    const unsigned int  CMD_GET_VENDOR_ID = 0; // Ëé∑ÂèñÂéÇÂïÜ‰ø°ÊÅØ
     char strVendor[16] = {0};
     unsigned int buffer[4] = {0};
 
@@ -48,14 +48,14 @@ bool LCPUID::GetBrand(OUT string& brand)
     char strBrand[50] = {0};
 
     brand.clear();
-    for (unsigned int i = 0; i < 3; i++) // “¿¥Œ÷¥––3∏ˆ÷∏¡Ó
+    for (unsigned int i = 0; i < 3; i++) // ‰æùÊ¨°ÊâßË°å3‰∏™Êåá‰ª§
     {
         unsigned int buffer[4] = {0};
         bool bRet = this->ExecuteCPUID(CMD_GET_BRAND + i, buffer);
         if (!bRet)
             return false;
 
-        memcpy(strBrand + i * 16, &buffer, 16); // √ø¥Œ÷¥––Ω· ¯∫Û£¨±£¥ÊÀƒ∏ˆºƒ¥Ê∆˜¿Ôµƒasc¬ÎµΩ ˝◊È
+        memcpy(strBrand + i * 16, &buffer, 16); // ÊØèÊ¨°ÊâßË°åÁªìÊùüÂêéÔºå‰øùÂ≠òÂõõ‰∏™ÂØÑÂ≠òÂô®ÈáåÁöÑascÁ†ÅÂà∞Êï∞ÁªÑ
     } 
 
     brand = strBrand;
@@ -82,7 +82,7 @@ unsigned int LCPUID::GetMaxExtendedCommand()
 
 bool LCPUID::ExecuteCPUID(IN unsigned int cmd, OUT unsigned int cpuInfo[4])
 {
-    // ºÏ≤È√¸¡Óµƒ∑∂Œß÷µ
+    // Ê£ÄÊü•ÂëΩ‰ª§ÁöÑËåÉÂõ¥ÂÄº
     bool bRet = false;
     if ((cmd >= CPUID_MIN_COMMAND && cmd <= m_maxCommand) ||
         (cmd >= CPUID_MIN_EXTENDED_COMMAND && cmd <= m_maxExtendedCommand))

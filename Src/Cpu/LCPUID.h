@@ -1,4 +1,4 @@
-
+ï»¿
 
 #ifndef _LCPUID_H_
 #define _LCPUID_H_
@@ -18,41 +18,41 @@ using std::string;
 #define OUT
 #endif
 
-/// @brief CPUIDÖ¸ÁîÀà
+/// @brief CPUIDæŒ‡ä»¤ç±»
 class LCPUID
 {
 public:
     LCPUID();
     ~LCPUID();
 
-    /// @brief »ñÈ¡CPU³§ÉÌĞÅÏ¢
+    /// @brief è·å–CPUå‚å•†ä¿¡æ¯
     /// @param[out] vendor
-    /// @return ³É¹¦·µ»Øtrue, Ê§°Ü·µ»Øfalse(CPU²»Ö§³Ö)
+    /// @return æˆåŠŸè¿”å›true, å¤±è´¥è¿”å›false(CPUä¸æ”¯æŒ)
     bool GetVendor(OUT string& vendor);
 
-    /// @brief »ñÈ¡CPUÉÌ±êĞÅÏ¢
+    /// @brief è·å–CPUå•†æ ‡ä¿¡æ¯
     /// @param[out] brand
-    /// @return ³É¹¦·µ»Øtrue, Ê§°Ü·µ»Øfalse(CPU²»Ö§³Ö)
+    /// @return æˆåŠŸè¿”å›true, å¤±è´¥è¿”å›false(CPUä¸æ”¯æŒ)
     bool GetBrand(OUT string& brand);
     
 private:
-    /// @brief »ñÈ¡CPUÖ§³ÖµÄ×î´óÃüÁî
-    /// @return CPUÖ§³ÖµÄ×î´óÃüÁî
+    /// @brief è·å–CPUæ”¯æŒçš„æœ€å¤§å‘½ä»¤
+    /// @return CPUæ”¯æŒçš„æœ€å¤§å‘½ä»¤
     unsigned int GetMaxCommand();
     
-    /// @brief »ñÈ¡CPUÖ§³ÖµÄ×î´óÀ©Õ¹ÃüÁî
-    /// @return CPUÖ§³ÖµÄ×î´óÀ©Õ¹ÃüÁî
+    /// @brief è·å–CPUæ”¯æŒçš„æœ€å¤§æ‰©å±•å‘½ä»¤
+    /// @return CPUæ”¯æŒçš„æœ€å¤§æ‰©å±•å‘½ä»¤
     unsigned int GetMaxExtendedCommand();
 
-    /// @brief Ö´ĞĞCPUIDÃüÁî
-    /// @param[in] cmd ÃüÁîÖµ
-    /// @param[out] cpuInfo Êä³öµÄÄÚÈİ
-    /// @return ³É¹¦·µ»Øtrue, Ê§°Ü·µ»Øfalse(cpu²»Ö§³Ö¸ÃÃüÁî)
+    /// @brief æ‰§è¡ŒCPUIDå‘½ä»¤
+    /// @param[in] cmd å‘½ä»¤å€¼
+    /// @param[out] cpuInfo è¾“å‡ºçš„å†…å®¹
+    /// @return æˆåŠŸè¿”å›true, å¤±è´¥è¿”å›false(cpuä¸æ”¯æŒè¯¥å‘½ä»¤)
     bool ExecuteCPUID(IN unsigned int cmd, OUT unsigned int cpuInfo[4]);
 
 private:
-    unsigned int m_maxCommand; ///< CPUÖ§³ÖµÄ×î´óÃüÁî
-    unsigned int m_maxExtendedCommand; ///< CPUÖ§³ÖµÄ×î´óÀ©Õ¹ÃüÁî
+    unsigned int m_maxCommand; ///< CPUæ”¯æŒçš„æœ€å¤§å‘½ä»¤
+    unsigned int m_maxExtendedCommand; ///< CPUæ”¯æŒçš„æœ€å¤§æ‰©å±•å‘½ä»¤
 };
 
 #endif
