@@ -298,23 +298,20 @@ void HardwareInforPage::CollectTips()
     const DiskInforArray& diskInforArray = LHardwareInfor::GetDiskInfor();
     for (unsigned long i = 0; i < diskInforArray.Count; i++)
     {
-        if (diskInforArray.DiskType[i] != FIXED_DISK)
-            continue;
-
         QString fixedDiskType;
-        switch (diskInforArray.FixedDiskType[i])
+        switch (diskInforArray.DiskType[i])
         {
-        case FIXED_DISK_SATA_SSD:
+        case DISK_FIXED_SATA_SSD:
             this->AddTips("SATA SSD");
             break;
-        case FIXED_DISK_EMMC:
+        case DISK_FIXED_EMMC:
             this->AddTips("EMMC Disk");
             break;
-        case FIXED_DISK_RAID:
+        case DISK_FIXED_RAID:
             this->AddTips("Raid Disk");
             break;
-        case FIXED_DISK_NVME_SSD:
-            this->AddTips("NVME SSD");
+        case DISK_FIXED_NVME_SSD:
+            this->AddTips("NVMe SSD");
             break;
         default:
             break;
@@ -489,7 +486,10 @@ void ComputerItemInfor::LoadHWInfor()
     
     for (unsigned long i = 0; i < diskInforArray.Count; i++)
     {
-        if (diskInforArray.DiskType[i] != FIXED_DISK)
+        if (diskInforArray.DiskType[i] == DISK_UNKNOWN ||
+            diskInforArray.DiskType[i] == DISK_REMOVABLE ||
+            diskInforArray.DiskType[i] == DISK_EXTERNAL_USB ||
+            diskInforArray.DiskType[i] == DISK_VIRTUAL)
             continue;
 
         QString diskInfor;
@@ -815,7 +815,10 @@ void DiskItemInfor::LoadHWInfor()
     PrintLogW(L"Disk Information:");
     for (unsigned long i = 0; i < diskInforArray.Count; i++)
     {
-        if (diskInforArray.DiskType[i] != FIXED_DISK)
+        if (diskInforArray.DiskType[i] == DISK_UNKNOWN ||
+            diskInforArray.DiskType[i] == DISK_REMOVABLE ||
+            diskInforArray.DiskType[i] == DISK_EXTERNAL_USB ||
+            diskInforArray.DiskType[i] == DISK_VIRTUAL)
             continue;
 
         PrintLogW(L"\tFixed Disk Index: %u", i);
@@ -842,21 +845,21 @@ void DiskItemInfor::LoadHWInfor()
         PrintLogW(L"\tInterface Type: %s", interfaceType.toStdWString().c_str());
 
         QString fixedDiskType;
-        switch (diskInforArray.FixedDiskType[i])
+        switch (diskInforArray.DiskType[i])
         {
-        case FIXED_DISK_HDD:
-            fixedDiskType = "HDD";
+        case DISK_FIXED_SATA_HDD:
+            fixedDiskType = "SATA HDD";
             break;
-        case FIXED_DISK_SATA_SSD:
+        case DISK_FIXED_SATA_SSD:
             fixedDiskType = "SATA SSD";
             break;
-        case FIXED_DISK_EMMC:
+        case DISK_FIXED_EMMC:
             fixedDiskType = "EMMC";
             break;
-        case FIXED_DISK_RAID:
+        case DISK_FIXED_RAID:
             fixedDiskType = "RAID";
             break;
-        case FIXED_DISK_NVME_SSD:
+        case DISK_FIXED_NVME_SSD:
             fixedDiskType = "NVME SSD";
             break;
         default:
@@ -864,29 +867,7 @@ void DiskItemInfor::LoadHWInfor()
             break;
         }
         this->ContentAddItem(QObject::tr("Fixed Disk Type"), fixedDiskType);
-        PrintLogW(L"\tFixed Disk Type: %d", diskInforArray.FixedDiskType[i]);
-
-        PrintLogW(L"\tATA Disk: %s", diskInforArray.IsATA[i] ? L"Yes" : L"No");
-        if (diskInforArray.IsATA[i])
-        {
-            QString rotationRate;
-            if (diskInforArray.ATAInfor[i].RotationRate != 1)
-                rotationRate = QString::fromStdWString(L"%1 RPM").arg(diskInforArray.ATAInfor[i].RotationRate);
-
-            if (diskInforArray.ATAInfor[i].RotationRate == 1)
-                rotationRate = "SSD";
-
-            this->ContentAddItem(QObject::tr("RotationRate"), rotationRate);
-            PrintLogW(L"\tRotationRate: %s", rotationRate.toStdWString().c_str());
-
-            QString sataType = QString::fromStdWString(L"SATA-%1").arg(diskInforArray.ATAInfor[i].SATAType);
-            this->ContentAddItem(QObject::tr("SATA Type"), sataType);
-            PrintLogW(L"\tSATA Type: %s", sataType.toStdWString().c_str());
-
-            QString powerOnHours = QString::fromStdWString(L"%1 Hours").arg(diskInforArray.ATAInfor[i].PowerOnHours);
-            this->ContentAddItem(QObject::tr("Power On Hours"), powerOnHours);
-            PrintLogW(L"\tPower On Hours: %s", powerOnHours.toStdWString().c_str());
-        }
+        PrintLogW(L"\tFixed Disk Type: %d", diskInforArray.DiskType[i]);
 
         this->ContentAddBlankLine();
     }

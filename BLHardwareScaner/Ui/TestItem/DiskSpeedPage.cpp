@@ -300,52 +300,40 @@ void DiskSpeedPage::UpdateDiskInformation()
     {
         DISK_TYPE diskType = diskInforArray.DiskType[i];
         QString modelName;
-        if (FIXED_DISK == diskType)
-        {
-            switch (diskInforArray.FixedDiskType[i])
-            {
-            case FIXED_DISK_HDD:
-                modelName += "(HDD)";
-                break;
-            case FIXED_DISK_SATA_SSD:
-                modelName += "(SATA SSD)";
-                break;
-            case FIXED_DISK_EMMC:
-                modelName += "(EMMC)";
-                break;
-            case FIXED_DISK_RAID:
-                modelName += "(RAID)";
-                break;
-            case FIXED_DISK_NVME_SSD:
-                modelName += "(NVME SSD)";
-                break;
-            default:
-                modelName += "(Unknown)";
-                break;
-            }
-        }
 
-        if (EXTERNAL_USB_DISK == diskType)
+        switch (diskInforArray.DiskType[i])
         {
-            modelName += "(Exteral USB)";
-        }
-
-        if (REMOVABLE_DISK == diskType)
-        {
-            modelName += "(Removable)";
-        }
-
-        if (VIRTUAL_DISK == diskType)
-        {
-            modelName += "(Virtual)";
-        }
-
-        if (UNKNOWN_DISK == diskType)
-        {
+        case DISK_UNKNOWN:
             modelName += "(Unknown)";
+            break;
+        case DISK_VIRTUAL:
+            modelName += "(Virtual)";
+            break;
+        case DISK_REMOVABLE:
+            modelName += "(Removable)";
+            break;
+        case DISK_EXTERNAL_USB:
+            modelName += "(Exteral USB)";
+            break;
+        case DISK_FIXED_SATA_HDD:
+            modelName += "(SATA HDD)";
+            break;
+        case DISK_FIXED_SATA_SSD:
+            modelName += "(SATA SSD)";
+            break;
+        case DISK_FIXED_EMMC:
+            modelName += "(EMMC)";
+            break;
+        case DISK_FIXED_RAID:
+            modelName += "(RAID)";
+            break;
+        case DISK_FIXED_NVME_SSD:
+            modelName += "(NVME SSD)";
+            break;
+        default:
+            modelName += "(Unknown)";
+            break;
         }
-        
-   
 
         modelName += QString::fromStdWString(diskInforArray.Model[i]);
 
