@@ -22,10 +22,10 @@ GPU测试： <br>
 
 # Release Note: <br>
 
-2018/04/03 V2.0.0 Release
+**2018/04/03 V2.0.0 Release**
 1. 项目迁移为Qt5.8 + VS2015
 
-2017/09/25 V1.4.9 Release
+**2017/09/25 V1.4.9 Release**
 1. 增加功能: RestartAging测试可以切换为S3或S4测试
 2. 增加功能: RestartAging中增加丢失设备检查
 
