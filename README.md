@@ -2,8 +2,10 @@
 这是一个Windows下的硬件扫描和测试工具
 
 # 开发环境 <br>
-VS2010 C++ <br>
-Qt4.7.1 <br>
+VS2015 C++ <br>
+Win10 16299 SDK <br>
+Qt5.8.0_x86 <br>
+
 
 # 程序截图 <br>
 主程序: <br>
@@ -19,6 +21,13 @@ GPU测试： <br>
 ![](https://github.com/BurnellLiu/BLHWScaner/blob/master/ReadMeImg/gputest.PNG) <br>
 
 # Release Note: <br>
+
+2018/04/03 V2.0.0 Release
+1. 项目迁移为Qt5.8 + VS2015
+
+2017/09/25 V1.4.9 Release
+1. 增加功能: RestartAging测试可以切换为S3或S4测试
+2. 增加功能: RestartAging中增加丢失设备检查
 
 **2017/07/18 V1.4.8 Release** <br>
 1. 增加功能: RestartAging测试可以切换为S3或S4测试 <br>
