@@ -6,11 +6,11 @@
 
 
 
-#define FTP_USER "bxu2359840588"
+#define FTP_USER ""
 #define FTP_PWD ""
 
-#define CHECK_NEW_URL "ftp://bxu2359840588@bxu2359840588.my3w.com/myfolder/SoftRelease/BLHWScaner/Version"
-#define DOWNLOAD_NEW_URL   "ftp://bxu2359840588@bxu2359840588.my3w.com/myfolder/SoftRelease/BLHWScaner/BLHWScaner.rar"
+#define CHECK_NEW_URL "ftp://139.224.193.11/SW/Release/BLHWScaner/Version"
+#define DOWNLOAD_NEW_URL   "ftp://139.224.193.11/SW/Release/BLHWScaner/BLHWScaner.rar"
 
 #define UPDATE_PATH ".\\Temp\\Update\\"
 #define CHECK_NEW_FILE_PATH ".\\Temp\\Update\\Version"

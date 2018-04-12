@@ -3,7 +3,9 @@
 #ifndef _FTP_DOWNLOAD_
 #define _FTP_DOWNLOAD_
 
-#include <QtNetwork/QFtp>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
 #include <QtCore/QFile>
 
 
@@ -67,25 +69,31 @@ public:
     const DownloadState& GetDownloadState();
 
 private slots:
-    /// @brief 下载完成槽函数
-    /// @param[in] bError 标志是否发生错误
-    void FtpDownloadDone(bool bError);
 
-    /// @brief 数据传输进度
+    /// @brief 下载进度槽函数
     /// @param[in] done 已完成字节数
     /// @param[in] total 总字节数
-    void DataTransferProgress(qint64 done, qint64 total);
+    void DownloadProgress(qint64 done, qint64 total);
+
+    /// @brief 下载完成槽函数
+    /// @param[in] bError 标志是否发生错误
+    void DownloadDone();
+
+    /// @brief 下载错误槽函数
+    /// @param[in] done 已完成字节数
+    void DownloadError(QNetworkReply::NetworkError error);
 
 private:
-    QFtp m_ftp; ///< FTP对象
-    QFile m_downloadFile; ///< 保存的文件对象
-    QString m_filePath; ///< 文件保存路径
-    QString m_downloadUrl; ///< 下载链接
+    QNetworkAccessManager m_ftp;    ///< FTP对象
+    QNetworkReply* m_pDownloadReply;///< 下载回复对象 
+    QFile m_downloadFile;           ///< 保存的文件对象
+    QString m_filePath;             ///< 文件保存路径
+    QString m_downloadUrl;          ///< 下载链接
 
-    QString m_loginUser; ///< FTP登录用户名
-    QString m_loginPwd; ///< FTP登录密码
+    QString m_loginUser;            ///< FTP登录用户名
+    QString m_loginPwd;             ///< FTP登录密码
 
-    DownloadState m_downloadState; ///< 存储下载状态
+    DownloadState m_downloadState;  ///< 存储下载状态
 };
 
 #endif
