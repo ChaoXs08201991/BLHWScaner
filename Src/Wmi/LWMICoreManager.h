@@ -23,6 +23,7 @@ typedef unsigned char LBYTE;
 typedef unsigned short LUINT16;
 typedef unsigned int LUINT;
 typedef unsigned __int64 LUINT64;
+typedef bool LBOOL;
 
 struct IWbemLocator;
 struct IWbemServices;
@@ -33,7 +34,72 @@ struct IWbemConfigureRefresher;
 
 namespace LWMI
 {
+    void CIMDateTimeToInt64(const wstring& strTime, __int64& time);
+    
+
     class LInitCom;
+
+
+    /// @brief WMI方法输入参数对象
+    class LWMIInParam
+    {
+    public:
+        /// @brief 构造函数
+        /// @param[in] pNamespace 需要连接的名字空间
+        /// @param[in] pClassName 类名
+        /// @param[in] pMethodName 方法名
+        LWMIInParam(const wchar_t* pNamespace, const wchar_t* pClassName, const wchar_t* pMethodName);
+
+        /// @brief 析构函数
+        ~LWMIInParam();
+
+        /// @brief 放置32位整数属性
+        /// @param[in] pPrppertyName 属性名称
+        /// @param[in] uintProperty 属性值
+        /// @return 成功返回true, 失败返回false
+        bool PutLUINTProperty(const wchar_t* pPropertyName, LUINT uintProperty);
+
+        /// @brief 放置8位整数属性
+        /// @param[in] pPrppertyName 属性名称
+        /// @param[in] byteProperty 属性值
+        /// @return 成功返回true, 失败返回false
+        bool PutLBYTEProperty(const wchar_t* pPropertyName, LBYTE byteProperty);
+
+    private:
+        IWbemLocator* m_pWbemLocator;
+        IWbemServices* m_pWbemServices;
+        IWbemClassObject* m_pClassObject;
+        IWbemClassObject* m_pInParamDef;
+        IWbemClassObject* m_pInParam;
+
+        LInitCom* m_pInitComObject;
+
+        friend class LWMICoreManager;
+    };
+
+
+    /// @brief WMI方法输出参数对象
+    class LWMIOutParam
+    {    
+    public:
+        /// @brief 构造函数
+        LWMIOutParam();
+
+        /// @brief 析构函数
+        ~LWMIOutParam();
+
+        /// @brief 获取字符串属性
+        /// @param[in] pPrppertyName 属性名称
+        /// @param[out] strProperty 存储属性值
+        /// @return 成功返回true, 失败返回false
+        bool GetStringProperty(const wchar_t* pPropertyName, wstring& strProperty);
+
+    private:
+        IWbemClassObject* m_pOutParam; // 输出参数
+
+        friend class LWMICoreManager;
+    };
+
 
     /// @brief WMI核心对象
     class LWMICoreManager
@@ -57,6 +123,13 @@ namespace LWMI
         /// @return 对象的数量
         int GetObjectsCount();
 
+        /// @brief 获取布尔属性
+        /// @param[in] objectIndex 对象索引
+        /// @param[in] pPrppertyName 属性名称
+        /// @param[out] boolProperty 存储属性值
+        /// @return 成功返回true, 失败返回false
+        bool GetBooleanProperty(int objectIndex, const wchar_t* pPropertyName, LBOOL& boolProperty);
+
         /// @brief 获取字符串属性
         /// @param[in] objectIndex 对象索引
         /// @param[in] pPrppertyName 属性名称
@@ -70,6 +143,13 @@ namespace LWMI
         /// @param[out] strProperty 存储属性值
         /// @return 成功返回true, 失败返回false
         bool GetStringPropertyRefreshed(int objectIndex, const wchar_t* pPropertyName, wstring& strProperty);
+
+        /// @brief 获取字符串数组属性
+        /// @param[in] objectIndex 对象索引
+        /// @param[in] pPrppertyName 属性名称
+        /// @param[out] propertyArray 存储字符串数组属性
+        /// @return 成功返回true, 失败返回false
+        bool GetStringArrayProperty(int objectIndex, const wchar_t* pPropertyName, vector<wstring>& propertyArray);
 
         /// @brief 获取无符号整数属性
         /// @param[in] objectIndex 对象索引
@@ -127,6 +207,20 @@ namespace LWMI
         /// @return 成功返回true, 失败返回false
         bool GetUINT64PropertyRefreshed(int objectIndex, const wchar_t* pPropertyName, LUINT64& ui64Property);
 
+        /// @brief 执行方法
+        /// @param[in] objectIndex 对象索引
+        /// @param[in] pMethodName 方法名
+        /// @param[out] pOutput 输出参数
+        /// @return 成功返回true, 失败返回false
+        bool ExecMethod(int objectIndex, const wchar_t* pMethodName, LWMIOutParam* pOutput);
+
+        /// @brief 执行方法
+        /// @param[in] objectIndex 对象索引
+        /// @param[in] pMethodName 方法名
+        /// @param[out] pInput 输入参数
+        /// @return 成功返回true, 失败返回false
+        bool ExecMethod(int objectIndex, const wchar_t* pMethodName, LWMIInParam* pInputParam);
+
     private:
         /// @brief 清理资源
         void BaseCleanUp();
@@ -145,6 +239,9 @@ namespace LWMI
 
         LInitCom* m_pInitComObject;
     };
+
+
+    
 
 }
 

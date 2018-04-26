@@ -24,6 +24,37 @@
 
 namespace LWMI
 {
+    void CIMDateTimeToInt64(const wstring& strTime, __int64& time)
+    {
+        ISWbemDateTime* pDateTime = NULL;
+        HRESULT hr = CoCreateInstance(
+            __uuidof(SWbemDateTime), 
+            0,
+            CLSCTX_INPROC_SERVER, 
+            IID_PPV_ARGS(&pDateTime));
+        if (SUCCEEDED(hr)) 
+        {
+            BSTR bstr = SysAllocString(strTime.c_str());
+            if (bstr) 
+            {
+                hr = pDateTime->put_Value(bstr);
+                if (SUCCEEDED(hr)) 
+                {
+                    BSTR bstrFT;
+                    hr = pDateTime->GetFileTime(VARIANT_FALSE, &bstrFT);
+                    if (SUCCEEDED(hr)) 
+                    {
+                        time = _wtoi64(bstrFT);
+                        SysFreeString(bstrFT);
+                    }
+                }
+                SysFreeString(bstr);
+            }
+            pDateTime->Release();
+        }
+    }
+
+
     /// @brief COM初始化类
     /// 只支持单线程
     class LInitCom
@@ -56,6 +87,142 @@ namespace LWMI
     private:
         bool bSuccess; ///< 标识是否初始化成功
     };
+
+    LWMIInParam::LWMIInParam(const wchar_t* pNamespace, const wchar_t* pClassName, const wchar_t* pMethodName)
+    {
+        m_pWbemLocator = NULL;
+        m_pWbemServices = NULL;
+        m_pClassObject = NULL;
+        m_pInParamDef = NULL;
+        m_pInParam = NULL;
+        
+        m_pInitComObject = new LInitCom();
+
+        if (pNamespace == NULL || pClassName == NULL || pMethodName == NULL)
+            return;
+
+        HRESULT hr = CoCreateInstance(CLSID_WbemLocator, NULL, CLSCTX_INPROC_SERVER,
+            IID_IWbemLocator, (LPVOID*)&m_pWbemLocator);
+        if (FAILED(hr))
+            return;
+
+        hr = m_pWbemLocator->ConnectServer(_bstr_t(pNamespace), NULL, NULL, NULL,
+            0, NULL, NULL, &m_pWbemServices);
+        if (FAILED(hr))
+            return;
+
+        hr = m_pWbemServices->GetObject(_bstr_t(pClassName), 0, NULL, &m_pClassObject, NULL);
+        if (FAILED(hr))
+            return;
+
+        hr = m_pClassObject->GetMethod(pMethodName, 0, &m_pInParamDef, NULL);
+        if (FAILED(hr))
+            return;
+
+        hr = m_pInParamDef->SpawnInstance(0, &m_pInParam);
+        if (FAILED(hr))
+            return;
+
+    }
+
+    bool LWMIInParam::PutLUINTProperty(const wchar_t* pPropertyName, LUINT uintProperty)
+    {
+        if (m_pInParam == NULL || pPropertyName == NULL)
+            return false;
+
+//         VARIANT var1;
+//         VariantInit(&var1);
+// 
+//         V_VT(&var1) = VT_BSTR;
+//         V_BSTR(&var1) = SysAllocString(L"0");
+//         HRESULT hr = m_pInParam->Put(pPropertyName, 0, &var1, CIM_UINT32);
+
+        VARIANT param;
+        VariantInit(&param);
+        param.vt = VT_I4;
+        param.ullVal = uintProperty;
+        HRESULT hr = m_pInParam->Put(pPropertyName, 0, &param, 0);
+        VariantClear(&param);
+        if (FAILED(hr))
+            return false;
+
+        return true;
+    }
+
+    bool LWMIInParam::PutLBYTEProperty(const wchar_t* pPropertyName, LBYTE byteProperty)
+    {
+        if (m_pInParam == NULL || pPropertyName == NULL)
+            return false;
+
+        if (m_pInParam == NULL || pPropertyName == NULL)
+            return false;
+
+        VARIANT param;
+        VariantInit(&param);
+        param.vt = VT_UI1;
+        param.uiVal = byteProperty;
+        HRESULT hr = m_pInParam->Put(pPropertyName, 0, &param, 0);
+        VariantClear(&param);
+        if (FAILED(hr))
+            return false;
+
+        return true;
+    }
+
+    LWMIInParam::~LWMIInParam()
+    {
+        LSAFE_RELEASE(m_pWbemLocator);
+        LSAFE_RELEASE(m_pWbemServices);
+        LSAFE_RELEASE(m_pClassObject);
+        LSAFE_RELEASE(m_pInParamDef);
+        LSAFE_RELEASE(m_pInParam);
+        LSAFE_DELETE(m_pInitComObject);
+    }
+
+    LWMIOutParam::LWMIOutParam()
+    {
+        m_pOutParam = NULL;
+    }
+
+    LWMIOutParam::~LWMIOutParam()
+    {
+        LSAFE_RELEASE(m_pOutParam);
+    }
+
+    bool LWMIOutParam::GetStringProperty(const wchar_t* pPropertyName, wstring& strProperty)
+    {
+        bool bRet = false;
+        VARIANT vtProp;
+        HRESULT hr = WBEM_S_NO_ERROR;
+
+        if (m_pOutParam == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+            
+
+        VariantInit(&vtProp);
+        hr = m_pOutParam->Get(pPropertyName, 0, &vtProp, 0, 0);
+        if (hr != WBEM_S_NO_ERROR)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (vtProp.vt == VT_EMPTY || vtProp.vt == VT_NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        bRet = true;
+        strProperty.assign(vtProp.bstrVal);
+
+    SAFE_EXIT:
+        VariantClear(&vtProp);
+        return bRet;
+    }
 
     LWMICoreManager::LWMICoreManager()
     {
@@ -212,6 +379,51 @@ SAFE_EXIT:
         return m_objectCount;
     }
 
+    bool LWMICoreManager::GetBooleanProperty(int objectIndex, const wchar_t* pPropertyName, LBOOL& boolProperty)
+    {
+        bool bRet = false;
+        VARIANT vtProp;
+        HRESULT hr;
+
+        if (objectIndex < 0 || objectIndex >= m_objectCount)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+        if (pPropertyName == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (m_pObjectArray[objectIndex] == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        VariantInit(&vtProp);
+        hr = m_pObjectArray[objectIndex]->Get(pPropertyName, 0, &vtProp, 0, 0);
+        if (hr != WBEM_S_NO_ERROR)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (vtProp.vt == VT_EMPTY || vtProp.vt == VT_NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        bRet = true;
+        boolProperty = (vtProp.boolVal == VARIANT_TRUE) ? true : false;
+
+    SAFE_EXIT:
+        VariantClear(&vtProp);
+        return bRet;
+    }
+
     bool LWMICoreManager::GetStringProperty(int objectIndex, const wchar_t* pPropertyName, wstring& strProperty)
     {
         bool bRet = false;
@@ -318,6 +530,62 @@ SAFE_EXIT:
 
 
 SAFE_EXIT:
+        VariantClear(&vtProp);
+        return bRet;
+    }
+
+    bool LWMICoreManager::GetStringArrayProperty(int objectIndex, const wchar_t* pPropertyName, vector<wstring>& propertyArray)
+    {
+        bool bRet = false;
+        VARIANT vtProp;
+        HRESULT hr;
+
+        if (objectIndex < 0 || objectIndex >= m_objectCount)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (pPropertyName == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        propertyArray.clear();
+
+        if (m_pObjectArray[objectIndex] == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        VariantInit(&vtProp);
+        hr = m_pObjectArray[objectIndex]->Get(pPropertyName, 0, &vtProp, 0, 0);
+        if (hr != WBEM_S_NO_ERROR)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (vtProp.vt == VT_EMPTY || vtProp.vt == VT_NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        bRet = true;
+
+        ULONG count = vtProp.parray->rgsabound->cElements;
+        for (LONG i = 0; i < (long)count; i++)
+        {
+            BSTR bstr = NULL;
+            SafeArrayGetElement(vtProp.parray, &i, &bstr);
+            propertyArray.push_back(bstr);
+        }
+
+
+    SAFE_EXIT:
         VariantClear(&vtProp);
         return bRet;
     }
@@ -734,6 +1002,122 @@ SAFE_EXIT:
         return bRet;
     }
 
+    bool LWMICoreManager::ExecMethod(
+        int objectIndex, 
+        const wchar_t* pMethodName,
+        LWMIOutParam* pOutput)
+    {
+        bool bRet = false;
+        HRESULT hr = WBEM_S_NO_ERROR;
+        VARIANT vtProp;
+        IWbemClassObject** ppOutput = NULL;
+
+        if (objectIndex < 0 || objectIndex >= m_objectCount)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+        if (pMethodName == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (m_pWbemServices == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+        VariantInit(&vtProp);
+        hr = m_pObjectArray[objectIndex]->Get(L"__PATH", 0, &vtProp, 0, 0);
+        if (hr != WBEM_S_NO_ERROR)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (pOutput == NULL)
+            ppOutput = NULL;  
+        else
+            ppOutput = &(pOutput->m_pOutParam);
+            
+        
+        hr = m_pWbemServices->ExecMethod(
+            vtProp.bstrVal, 
+            _bstr_t(pMethodName), 
+            0, 
+            NULL, 
+            NULL, 
+            ppOutput, 
+            NULL);
+        if (hr != WBEM_S_NO_ERROR)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        bRet = true;
+
+    SAFE_EXIT:
+        VariantClear(&vtProp);
+        return bRet;
+    }
+
+    bool LWMICoreManager::ExecMethod(int objectIndex, const wchar_t* pMethodName, LWMIInParam* pInputParam)
+    {
+        bool bRet = false;
+        HRESULT hr = WBEM_S_NO_ERROR;
+        VARIANT vtProp;
+        IWbemClassObject* pInput = NULL;
+
+        if (objectIndex < 0 || objectIndex >= m_objectCount)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+        if (pMethodName == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (m_pWbemServices == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+        VariantInit(&vtProp);
+        hr = m_pObjectArray[objectIndex]->Get(L"__PATH", 0, &vtProp, 0, 0);
+        if (hr != WBEM_S_NO_ERROR)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        if (pInputParam != NULL && pInputParam->m_pInParam != NULL)
+            pInput = pInputParam->m_pInParam;
+
+        hr = m_pWbemServices->ExecMethod(
+            vtProp.bstrVal,
+            _bstr_t(pMethodName),
+            0,
+            NULL,
+            pInput,
+            NULL,
+            NULL);
+        if (hr != WBEM_S_NO_ERROR)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        bRet = true;
+
+    SAFE_EXIT:
+        VariantClear(&vtProp);
+        return bRet;
+    }
+
     void LWMICoreManager::BaseCleanUp()
     {
         for (int i = 0; i < m_objectCount; i ++)
@@ -756,4 +1140,6 @@ SAFE_EXIT:
 
 
     }
+
+
 }

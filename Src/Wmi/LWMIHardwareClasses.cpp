@@ -635,6 +635,11 @@ SAFE_EXIT:
         m_pWMICoreManager = 0;
     }
 
+    int LBatteryFullCapacityManager::GetBatteryCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
     bool LBatteryFullCapacityManager::GetBatteryFullChargedCapacity(IN int index, OUT unsigned long& capacity)
     {
         LUINT uiCapacity;
@@ -642,6 +647,98 @@ SAFE_EXIT:
         if (bRet)
         {
             capacity = (unsigned long)uiCapacity;
+        }
+
+        return bRet;
+    }
+
+    LBatteryCycleCountManager::LBatteryCycleCountManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_WMI);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM BatteryCycleCount");
+    }
+
+    LBatteryCycleCountManager::~LBatteryCycleCountManager()
+    {
+        delete m_pWMICoreManager;
+        m_pWMICoreManager = 0;
+    }
+
+    int LBatteryCycleCountManager::GetBatteryCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LBatteryCycleCountManager::GetBatteryCycleCount(IN int index, OUT unsigned long& cycleCount)
+    {
+        LUINT uiCycleCount;
+        bool bRet = m_pWMICoreManager->GetUINT32Property(index, L"CycleCount", uiCycleCount);
+        if (bRet)
+        {
+            cycleCount = (unsigned long)uiCycleCount;
+        }
+
+        return bRet;
+    }
+
+    LBatteryStatusManager::LBatteryStatusManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_WMI);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM BatteryStatus");
+    }
+
+    LBatteryStatusManager::~LBatteryStatusManager()
+    {
+        delete m_pWMICoreManager;
+        m_pWMICoreManager = 0;
+    }
+
+    int LBatteryStatusManager::GetBatteryCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LBatteryStatusManager::GetCharging(IN int index, OUT bool& isCharging)
+    {
+        bool bRet = m_pWMICoreManager->GetBooleanProperty(index, L"Charging", isCharging);
+        return bRet;
+    }
+
+    bool LBatteryStatusManager::GetDisCharging(IN int index, OUT bool& isDisCharging)
+    {
+        bool bRet = m_pWMICoreManager->GetBooleanProperty(index, L"Discharging", isDisCharging);
+        return bRet;
+    }
+
+    bool LBatteryStatusManager::GetPowerOnline(IN int index, OUT bool& isPowerOnline)
+    {
+        bool bRet = m_pWMICoreManager->GetBooleanProperty(index, L"PowerOnline", isPowerOnline);
+        return bRet;
+    }
+
+    bool LBatteryStatusManager::GetRemainingCapacity(IN int index, OUT unsigned long& remainingCapacity)
+    {
+        LUINT uiRemainingCapacity;
+        bool bRet = m_pWMICoreManager->GetUINT32Property(index, L"RemainingCapacity", uiRemainingCapacity);
+        if (bRet)
+        {
+            remainingCapacity = (unsigned long)uiRemainingCapacity;
+        }
+
+        return bRet;
+    }
+
+    bool LBatteryStatusManager::GetVoltage(IN int index, OUT unsigned long& voltage)
+    {
+        LUINT uiVoltage;
+        bool bRet = m_pWMICoreManager->GetUINT32Property(index, L"Voltage", uiVoltage);
+        if (bRet)
+        {
+            voltage = (unsigned long)uiVoltage;
         }
 
         return bRet;

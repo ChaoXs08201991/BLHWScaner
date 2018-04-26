@@ -101,6 +101,94 @@ namespace LWMI
         return m_pWMICoreManager->GetStringProperty(index, L"SystemDrive", drive);
     }
 
+    bool LOperatingSystemManager::GetOSLocalDateTime(IN int index, OUT __int64& time)
+    {
+        wstring strTime;
+        bool bRet = m_pWMICoreManager->GetStringProperty(index, L"LocalDateTime", strTime);
+        CIMDateTimeToInt64(strTime, time);
+        return bRet;
+    }
+
+    LProcessManager::LProcessManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_CIMV2);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM Win32_Process");
+    }
+
+    LProcessManager::LProcessManager(IN const wstring& caption)
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_CIMV2);
+
+        wstring queryStatement = L"SELECT * FROM Win32_Process ";
+        queryStatement += L"WHERE Caption = \"";
+        queryStatement += caption;
+        queryStatement += L"\"";
+        bRet = m_pWMICoreManager->WQLQuery(queryStatement.c_str());
+    }
+
+    LProcessManager::LProcessManager(IN unsigned long id)
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_CIMV2);
+
+        wchar_t strID[16] = {0};
+        swprintf(strID, 16, L"%u", id);
+
+        wstring queryStatement = L"SELECT * FROM Win32_Process ";
+        queryStatement += L"WHERE Handle = \"";
+        queryStatement += strID;
+        queryStatement += L"\"";
+        bRet = m_pWMICoreManager->WQLQuery(queryStatement.c_str());
+    }
+
+    LProcessManager::~LProcessManager()
+    {
+        delete m_pWMICoreManager;
+    }
+
+    int LProcessManager::GetProcessCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LProcessManager::GetCreationDate(IN int index, OUT __int64& time)
+    {
+        wstring strTime;
+        bool bRet = m_pWMICoreManager->GetStringProperty(index, L"CreationDate", strTime);
+        CIMDateTimeToInt64(strTime, time);
+        return bRet;
+    }
+
+    bool LProcessManager::GetName(IN int index, OUT wstring& name)
+    {
+        return m_pWMICoreManager->GetStringProperty(index, L"Name", name);
+    }
+
+    bool LProcessManager::GetOwner(IN int index, OUT wstring& userName)
+    {
+        LWMIOutParam outParam;
+        m_pWMICoreManager->ExecMethod(index, L"GetOwner", &outParam);
+        return outParam.GetStringProperty(L"User", userName);
+    }
+
+    bool LProcessManager::GetProcessId(IN int index, OUT unsigned long& id)
+    {
+        LUINT uInt = 0;
+        bool bRet = m_pWMICoreManager->GetUINT32Property(index, L"ProcessId", uInt);
+        id = (unsigned long)uInt;
+        return bRet;
+    }
+
+    bool LProcessManager::GetExecutablePath(IN int index, OUT wstring& exePath)
+    {
+        return m_pWMICoreManager->GetStringProperty(index, L"ExecutablePath", exePath);
+    }
+
     LMS_SystemInformationManager::LMS_SystemInformationManager()
     {
         m_pWMICoreManager = 0;
@@ -245,5 +333,349 @@ namespace LWMI
         return bRet;
     }
 
+    LNetworkAdapterConfigManager::LNetworkAdapterConfigManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_WMI);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM Win32_NetworkAdapterConfiguration");
+        
+    }
+
+    LNetworkAdapterConfigManager::LNetworkAdapterConfigManager(const wstring& settingId)
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_CIMV2);
+        
+        wstring queryStatement = L"SELECT * FROM Win32_NetworkAdapterConfiguration ";
+        queryStatement += L"WHERE SettingID = \"";
+        queryStatement += settingId;
+        queryStatement += L"\"";
+
+        bRet = m_pWMICoreManager->WQLQuery(queryStatement.c_str());
+    }
+
+    int LNetworkAdapterConfigManager::GetConfigCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LNetworkAdapterConfigManager::IsDHCPEnabled(IN int index, OUT bool& bEnabled)
+    {
+        return m_pWMICoreManager->GetBooleanProperty(index, L"DHCPEnabled", bEnabled);
+    }
+
+    bool LNetworkAdapterConfigManager::GetIPAddress(IN int index, OUT vector<wstring>& ipAddressVec)
+    {
+        return m_pWMICoreManager->GetStringArrayProperty(index, L"IPAddress", ipAddressVec);
+    }
+
+    LNetworkAdapterConfigManager::~LNetworkAdapterConfigManager()
+    {
+        delete m_pWMICoreManager;
+    }
+
+    LMSDisk_SmartDataManager::LMSDisk_SmartDataManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_WMI);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM MSStorageDriver_FailurePredictData");
+    }
+
+    LMSDisk_SmartDataManager::~LMSDisk_SmartDataManager()
+    {
+        if (m_pWMICoreManager != 0)
+        {
+            delete m_pWMICoreManager;
+            m_pWMICoreManager = 0;
+        }
+    }
+
+    int LMSDisk_SmartDataManager::GetCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LMSDisk_SmartDataManager::GetInstanceName(IN int index, OUT wstring& instanceName)
+    {
+        return m_pWMICoreManager->GetStringProperty(index, L"InstanceName", instanceName);
+    }
+
+    bool LMSDisk_SmartDataManager::GetSmartData(IN int index, OUT unsigned char data[362])
+    {
+        vector<unsigned char> arrayData;
+        bool bRet = m_pWMICoreManager->GetUINT8ArrayProperty(index, L"VendorSpecific", arrayData);
+        for (unsigned int i = 0; i < 362 && i < arrayData.size(); i++)
+        {
+            data[i] = arrayData[i];
+        }
+        return bRet;
+    }
+
+    LMSDisk_SmartThresholdManager::LMSDisk_SmartThresholdManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_WMI);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM MSStorageDriver_FailurePredictThresholds");
+    }
+
+    LMSDisk_SmartThresholdManager::~LMSDisk_SmartThresholdManager()
+    {
+        if (m_pWMICoreManager != 0)
+        {
+            delete m_pWMICoreManager;
+            m_pWMICoreManager = 0;
+        }
+    }
+
+    int LMSDisk_SmartThresholdManager::GetCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LMSDisk_SmartThresholdManager::GetInstanceName(IN int index, OUT wstring& instanceName)
+    {
+        return m_pWMICoreManager->GetStringProperty(index, L"InstanceName", instanceName);
+    }
+
+    bool LMSDisk_SmartThresholdManager::GetThreshold(IN int index, OUT unsigned char threshold[362])
+    {
+        vector<unsigned char> arrayData;
+        bool bRet = m_pWMICoreManager->GetUINT8ArrayProperty(index, L"VendorSpecific", arrayData);
+        for (unsigned int i = 0; i < 362 && i < arrayData.size(); i++)
+        {
+            threshold[i] = arrayData[i];
+        }
+        return bRet;
+    }
+
+    LPerfFormattedData_ProcessManager::LPerfFormattedData_ProcessManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_CIMV2);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM Win32_PerfFormattedData_PerfProc_Process Where Name !=\"_Total\"");
+    }
+
+    LPerfFormattedData_ProcessManager::~LPerfFormattedData_ProcessManager()
+    {
+        if (m_pWMICoreManager != 0)
+        {
+            delete m_pWMICoreManager;
+            m_pWMICoreManager = 0;
+        }
+    }
+
+    int LPerfFormattedData_ProcessManager::GetProcessCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LPerfFormattedData_ProcessManager::GetProcessName(IN int index, OUT wstring& name)
+    {
+        return m_pWMICoreManager->GetStringProperty(index, L"Name", name);
+    }
+
+    bool LPerfFormattedData_ProcessManager::GetProcessID(IN int index, OUT unsigned long& id)
+    {
+        LUINT data;
+        bool bRet = m_pWMICoreManager->GetUINT32Property(index, L"IDProcess", data);
+        id = (unsigned long)data;
+        return bRet;
+    }
+
+    bool LPerfFormattedData_ProcessManager::GetIODataBytesPersec(IN int index, OUT unsigned long& ioData)
+    {
+        LUINT64 data64;
+        bool bRet = m_pWMICoreManager->GetUINT64Property(index, L"IODataBytesPersec", data64);
+
+        data64 = data64 / 1024;
+        ioData = (unsigned long)data64;
+        return bRet;
+    }
+
+    bool LPerfFormattedData_ProcessManager::GetPercentProcessorTime(IN int index, OUT unsigned long& percent)
+    {
+        LUINT64 data64;
+        bool bRet = m_pWMICoreManager->GetUINT64Property(index, L"PercentProcessorTime", data64);
+        percent = (unsigned long)data64;
+        return bRet;
+    }
+
+    bool LPerfFormattedData_ProcessManager::GetWorkingSetPrivate(IN int index, OUT unsigned long& workingSet)
+    {
+        LUINT64 data64;
+        bool bRet = m_pWMICoreManager->GetUINT64Property(index, L"WorkingSetPrivate", data64);
+        data64 = data64 / 1024;
+        workingSet = (unsigned long)data64;
+        return bRet;
+    }
+
+    LPerfRawData_ProcessManager::LPerfRawData_ProcessManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_CIMV2);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM Win32_PerfRawData_PerfProc_Process Where Name !=\"_Total\"");
+    }
+
+    LPerfRawData_ProcessManager::~LPerfRawData_ProcessManager()
+    {
+        if (m_pWMICoreManager != 0)
+        {
+            delete m_pWMICoreManager;
+            m_pWMICoreManager = 0;
+        }
+    }
+
+    int LPerfRawData_ProcessManager::GetProcessCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LPerfRawData_ProcessManager::GetProcessName(IN int index, OUT wstring& name)
+    {
+        return m_pWMICoreManager->GetStringProperty(index, L"Name", name);
+    }
+
+    bool LPerfRawData_ProcessManager::GetProcessID(IN int index, OUT unsigned long& id)
+    {
+        LUINT data;
+        bool bRet = m_pWMICoreManager->GetUINT32Property(index, L"IDProcess", data);
+        id = (unsigned long)data;
+        return bRet;
+    }
+
+    bool LPerfRawData_ProcessManager::GetIODataBytesPersec(IN int index, OUT unsigned long& ioData)
+    {
+        LUINT64 data64;
+        bool bRet = m_pWMICoreManager->GetUINT64Property(index, L"IODataBytesPersec", data64);
+
+        data64 = data64 / 1024;
+        ioData = (unsigned long)data64;
+        return bRet;
+    }
+
+    bool LPerfRawData_ProcessManager::GetPercentProcessorTime(IN int index, OUT unsigned long long& time)
+    {
+        LUINT64 data64;
+        bool bRet = m_pWMICoreManager->GetUINT64Property(index, L"PercentProcessorTime", data64);
+        time = data64;
+        return bRet;
+    }
+
+    bool LPerfRawData_ProcessManager::GetTimeStamp_Sys100NS(IN int index, OUT unsigned long long& timeStamp)
+    {
+        return m_pWMICoreManager->GetUINT64Property(index, L"TimeStamp_Sys100NS", timeStamp);
+    }
+
+    bool LPerfRawData_ProcessManager::GetWorkingSetPrivate(IN int index, OUT unsigned long& workingSet)
+    {
+        LUINT64 data64;
+        bool bRet = m_pWMICoreManager->GetUINT64Property(index, L"WorkingSetPrivate", data64);
+        data64 = data64 / 1024;
+        workingSet = (unsigned long)data64;
+        return bRet;
+    }
+
+    LPerfFormattedData_PerfDisk::LPerfFormattedData_PerfDisk(const wstring& diskName)
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_CIMV2);
+        wstring queryStr = L"SELECT * FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk Where Name = \"";
+        queryStr += diskName;
+        queryStr += L"\"";
+        bRet = m_pWMICoreManager->WQLQuery(queryStr.c_str());
+    }
+
+    LPerfFormattedData_PerfDisk::~LPerfFormattedData_PerfDisk()
+    {
+        if (m_pWMICoreManager != 0)
+        {
+            delete m_pWMICoreManager;
+            m_pWMICoreManager = 0;
+        }
+    }
+
+    int LPerfFormattedData_PerfDisk::GetDiskCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LPerfFormattedData_PerfDisk::GetPercentDiskTime(IN int index, OUT unsigned long& percent)
+    {
+        LUINT64 data64 = 0;
+        bool bRet = m_pWMICoreManager->GetUINT64Property(index, L"PercentDiskTime", data64);
+        percent = (unsigned long)data64;
+
+        return bRet;
+    }
+	
+	    LMonitorBrightnessManager::LMonitorBrightnessManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_WMI);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM WmiMonitorBrightness");
+    }
+
+    LMonitorBrightnessManager::~LMonitorBrightnessManager()
+    {
+        delete m_pWMICoreManager;
+    }
+
+    int LMonitorBrightnessManager::GetMonitorBrightnessCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LMonitorBrightnessManager::GetInstanceName(IN int index, OUT wstring& instanceName)
+    {
+        return m_pWMICoreManager->GetStringProperty(index, L"InstanceName", instanceName);
+    }
+
+    bool LMonitorBrightnessManager::GetCurrentBrightness(IN int index, OUT unsigned char& brightness)
+    {
+        return m_pWMICoreManager->GetUINT8Property(index, L"CurrentBrightness", brightness);
+    }
+
+    LMonitorBrightnessMethodsManager::LMonitorBrightnessMethodsManager()
+    {
+        m_pWMICoreManager = 0;
+        m_pWMICoreManager = new LWMICoreManager();
+        bool bRet = m_pWMICoreManager->BaseInit(NAMESPACE_ROOT_WMI);
+        bRet = m_pWMICoreManager->WQLQuery(L"SELECT * FROM WmiMonitorBrightnessMethods");
+    }
+
+    LMonitorBrightnessMethodsManager::~LMonitorBrightnessMethodsManager()
+    {
+        delete m_pWMICoreManager;
+    }
+
+    int LMonitorBrightnessMethodsManager::GetMonitorBrightnessMethodsCount()
+    {
+        return m_pWMICoreManager->GetObjectsCount();
+    }
+
+    bool LMonitorBrightnessMethodsManager::GetInstanceName(IN int index, OUT wstring& instanceName)
+    {
+        return m_pWMICoreManager->GetStringProperty(index, L"InstanceName", instanceName);
+    }
+
+    bool LMonitorBrightnessMethodsManager::SetBrightness(IN int index, IN unsigned int timeOut, IN unsigned char brightness)
+    {
+        LWMIInParam inparam(NAMESPACE_ROOT_WMI, L"WmiMonitorBrightnessMethods", L"WmiSetBrightness");
+        if (!inparam.PutLUINTProperty(L"Timeout", timeOut))
+            return false;
+
+        if (!inparam.PutLBYTEProperty(L"Brightness", brightness))
+            return false;
+
+        return m_pWMICoreManager->ExecMethod(index, L"WmiSetBrightness", &inparam);
+    }
 }
 

@@ -469,6 +469,72 @@ namespace LWMI
         LBatteryFullCapacityManager& operator = (const LBatteryFullCapacityManager&);
     };
 
+    /// @brief 电池循环计数管理者类
+    class LBatteryCycleCountManager
+    {
+    public:
+        LBatteryCycleCountManager();
+        ~LBatteryCycleCountManager();
+
+        /// @brief 获取电池数量
+        /// @return 电池数量
+        int GetBatteryCount();
+
+        /// @brief 获取电池循环计数
+        /// @param[in] index
+        /// @param[out] cycleCount 循环计数
+        /// @return 成功返回true, 失败返回false
+        bool GetBatteryCycleCount(IN int index, OUT unsigned long& cycleCount);
+
+    private:
+        LWMICoreManager* m_pWMICoreManager; ///< WMI核心管理者
+    private:
+        LBatteryCycleCountManager(const LBatteryCycleCountManager&);
+        LBatteryCycleCountManager& operator = (const LBatteryCycleCountManager&);
+    };
+
+    /// @brief 电池状态管理者类
+    class LBatteryStatusManager
+    {
+    public:
+        LBatteryStatusManager();
+        ~LBatteryStatusManager();
+
+        /// @brief 获取电池数量
+        /// @return 电池数量
+        int GetBatteryCount();
+
+        /// @brief 获取是否处于充电状态
+        /// @return 成功返回true, 失败返回false
+        bool GetCharging(IN int index, OUT bool& isCharging);
+
+        /// @brief 获取是否处于放电状态
+        /// @return 成功返回true, 失败返回false
+        bool GetDisCharging(IN int index, OUT bool& isDisCharging);
+
+        /// @brief 获取是否接入交流电
+        /// @return 成功返回true, 失败返回false
+        bool GetPowerOnline(IN int index, OUT bool& isPowerOnline);
+
+        /// @brief 获取剩余电量
+        /// @param[in] index
+        /// @param[out] remainingCapacity 剩余电量, 单位mWh
+        /// @return 成功返回true, 失败返回false
+        bool GetRemainingCapacity(IN int index, OUT unsigned long& remainingCapacity);
+
+        /// @brief 获取电压
+        /// @param[in] index
+        /// @param[out] voltage 电压, 单位mV
+        /// @return 成功返回true, 失败返回false
+        bool GetVoltage(IN int index, OUT unsigned long& voltage);
+
+    private:
+        LWMICoreManager* m_pWMICoreManager; ///< WMI核心管理者
+    private:
+        LBatteryStatusManager(const LBatteryStatusManager&);
+        LBatteryStatusManager& operator = (const LBatteryStatusManager&);
+    };
+
     /// @brief 物理网卡管理者类
     class LNetworkAdapterManager
     {
