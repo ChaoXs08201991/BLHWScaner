@@ -56,17 +56,21 @@ namespace LWMI
 
 
     /// @brief COM初始化类
-    /// 只支持单线程
     class LInitCom
     {
     public:
-        LInitCom()
+        LInitCom(bool bMultit = false)
         {
             this->bSuccess = false;
 
             // CoInitialize调用后返回S_FALSE或S_OK后都需调用CoUninitialize
             // CoInitialize调用后返回RPC_E_CHANGE_MODE, 表明当前线程已被初始化(且和当前模式不同),不需要调用CoUninitialize
-            HRESULT hr = CoInitialize(NULL);
+            HRESULT hr;
+            if (!bMultit)
+                hr = CoInitialize(NULL);
+            else
+                hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+
             if (hr == S_OK || hr == S_FALSE)
             {
                 this->bSuccess = true;
@@ -1137,8 +1141,157 @@ SAFE_EXIT:
         
         LSAFE_RELEASE(m_pWbemConfigRefresher);
         LSAFE_RELEASE(m_pWbemRefresher);
+    }
 
+    LWMICoreNotify::LWMICoreNotify()
+    {
+        m_pWbemLocator = NULL;
+        m_pWbemServices = NULL;
+        m_pUnsecApp = NULL;
+        m_pStubUnk = NULL;
+        m_pStubSink = NULL;
 
+        m_pInitComObject = new LInitCom(true);
+    }
+
+    LWMICoreNotify::~LWMICoreNotify()
+    {
+        this->BaseCleanUp();
+
+        LSAFE_DELETE(m_pInitComObject);
+    }
+
+    bool LWMICoreNotify::BaseInit(const wchar_t* pNamespace, IUnknown* pEvent)
+    {
+        bool bRet = false;
+        HRESULT hr;
+
+        this->BaseCleanUp();
+
+        if (pNamespace == NULL || pEvent == NULL)
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        hr = CoCreateInstance(
+            CLSID_WbemLocator,
+            0,
+            CLSCTX_INPROC_SERVER,
+            IID_IWbemLocator, (LPVOID *)&m_pWbemLocator
+        );
+        if (FAILED(hr))
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        hr = m_pWbemLocator->ConnectServer(
+            _bstr_t(pNamespace),
+            NULL,
+            NULL,
+            0,
+            NULL,
+            0,
+            0,
+            &m_pWbemServices
+        );
+        if (FAILED(hr))
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        hr = CoSetProxyBlanket(
+            m_pWbemServices,             // Indicates the proxy to set
+            RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx 
+            RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx 
+            NULL,                        // Server principal name 
+            RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx 
+            RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
+            NULL,                        // client identity
+            EOAC_NONE                    // proxy capabilities 
+        );
+        if (FAILED(hr))
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        hr = CoCreateInstance(
+            CLSID_UnsecuredApartment, 
+            NULL,
+            CLSCTX_LOCAL_SERVER, 
+            IID_IUnsecuredApartment,
+            (void**)&m_pUnsecApp
+        );
+        if (FAILED(hr))
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        hr = m_pUnsecApp->CreateObjectStub(pEvent, &m_pStubUnk);
+        if (FAILED(hr))
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        hr = m_pStubUnk->QueryInterface(IID_IWbemObjectSink, (void **)&m_pStubSink);
+        if (FAILED(hr))
+        {
+            bRet = false;
+            goto SAFE_EXIT;
+        }
+
+        bRet = true;
+
+    SAFE_EXIT:
+        if (!bRet)
+        {
+            this->BaseCleanUp();
+        }
+        return bRet;
+    }
+
+    bool LWMICoreNotify::QueryAsync(const wchar_t* pQuery)
+    {
+        if (m_pWbemServices == NULL || pQuery == NULL)
+            return false;
+
+        HRESULT hr = m_pWbemServices->ExecNotificationQueryAsync(
+            _bstr_t("WQL"),
+            _bstr_t(pQuery),
+            WBEM_FLAG_SEND_STATUS,
+            NULL,
+            m_pStubSink
+        );
+        if (FAILED(hr))
+            return false;
+
+        return true;
+    }
+
+    bool LWMICoreNotify::CancelQueryAsync()
+    {
+        if (m_pWbemServices == NULL || m_pStubSink == NULL)
+            return false;
+
+        HRESULT hr = m_pWbemServices->CancelAsyncCall(m_pStubSink);
+        if (FAILED(hr))
+            return false;
+
+        return true;
+    }
+
+    void LWMICoreNotify::BaseCleanUp()
+    {
+        LSAFE_RELEASE(m_pStubSink);
+        LSAFE_RELEASE(m_pStubUnk);
+        LSAFE_RELEASE(m_pUnsecApp);
+        LSAFE_RELEASE(m_pWbemServices);
+        LSAFE_RELEASE(m_pWbemLocator);   
     }
 
 

@@ -25,12 +25,15 @@ typedef unsigned int LUINT;
 typedef unsigned __int64 LUINT64;
 typedef bool LBOOL;
 
+struct IUnknown;
 struct IWbemLocator;
 struct IWbemServices;
 struct IEnumWbemClassObject;
 struct IWbemClassObject;
 struct IWbemRefresher;
 struct IWbemConfigureRefresher;
+struct IUnsecuredApartment;
+struct IWbemObjectSink;
 
 namespace LWMI
 {
@@ -240,6 +243,45 @@ namespace LWMI
         LInitCom* m_pInitComObject;
     };
 
+
+    /// @brief WMI核心通知类
+    class LWMICoreNotify
+    {
+    public:
+        /// @brief 构造函数
+        LWMICoreNotify();
+
+        /// @brief 析构函数
+        ~LWMICoreNotify();
+
+        /// @brief 初始化
+        /// @param[in] pNamespace 需要连接的名字空间
+        /// @param[in] pEvent 事件回调接口
+        /// @return 成功返回true, 失败返回false
+        bool BaseInit(const wchar_t* pNamespace, IUnknown* pEvent);
+
+        /// @brief 异步查询
+        /// @param[in] pQuery 查询语句
+        /// @return 成功返回true, 失败返回false
+        bool QueryAsync(const wchar_t* pQuery);
+
+        /// @brief 取消异步查询
+        /// @return 成功返回true, 失败返回false
+        bool CancelQueryAsync();
+
+    private:
+        /// @brief 清理资源
+        void BaseCleanUp();
+
+    private:
+        IWbemLocator* m_pWbemLocator;
+        IWbemServices* m_pWbemServices;
+        IUnsecuredApartment* m_pUnsecApp;
+        IUnknown* m_pStubUnk;
+        IWbemObjectSink* m_pStubSink;
+
+        LInitCom* m_pInitComObject;
+    };
 
     
 
